@@ -326,11 +326,11 @@ function applyRolePermissions(role, user) {
   const roleKey = (role || "member").toLowerCase();
 
   const roleMeta = {
-    owner: { title: "Owner 👑", class: "role-badge-owner" },
-    admin: { title: "Admin 🛡️", class: "role-badge-admin" },
-    premium: { title: "Premium ⭐", class: "role-badge-premium" },
-    member: { title: "Member 👤", class: "role-badge-member" },
-  }[roleKey] || { title: "Member 👤", class: "role-badge-member" };
+    owner: { title: "Owner \u{1F451}", class: "role-badge-owner" },
+    admin: { title: "Admin \u{1F6E1}\u{FE0F}", class: "role-badge-admin" },
+    premium: { title: "Premium \u{2B50}", class: "role-badge-premium" },
+    member: { title: "Member \u{1F464}", class: "role-badge-member" },
+  }[roleKey] || { title: "Member \u{1F464}", class: "role-badge-member" };
 
   // Update role badges
   const topbarRole = document.getElementById("topbar-role-badge");
@@ -455,11 +455,11 @@ function updateAdminRequestButtonState(user) {
   const reqStatus = user.adminRequest?.status;
   if (reqStatus === "pending") {
     if (btn) btn.disabled = true;
-    if (btnText) btnText.textContent = "Request Pending Approval ⏳";
+    if (btnText) btnText.textContent = "Request Pending Approval \u{23F3}";
     if (hint) hint.textContent = "Your Admin promotion request is pending Owner review.";
   } else if (reqStatus === "approved") {
     if (btn) btn.disabled = true;
-    if (btnText) btnText.textContent = "Admin Approved ✅";
+    if (btnText) btnText.textContent = "Admin Approved \u{2705}";
     if (hint) hint.textContent = "Your account has been granted Admin permissions.";
   } else if (reqStatus === "rejected") {
     if (btn) btn.disabled = false;
@@ -844,7 +844,7 @@ async function loadCommandList() {
             .map(
               (i) =>
                 `<span class="cmd-chip ${i.status === "key" ? "cmd-chip--locked" : ""}" title="${escapeHtml(i.desc)}">${
-                  i.status === "key" ? "⚿ " : ""
+                  i.status === "key" ? "\u{26BF} " : ""
                 }.${escapeHtml(i.cmd)}</span>`
             )
             .join("");

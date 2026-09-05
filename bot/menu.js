@@ -140,7 +140,7 @@ function buildMenuCaption(botSettings, member) {
   for (const cat of MENU_CATEGORIES) {
     lines.push(`╭─「 ${cat.title} 」`);
     for (const item of cat.items) {
-      const lockTag = item.status === "key" ? " ⚿" : "";
+      const lockTag = item.status === "key" ? " \u{26BF}" : "";
       lines.push(`│ • ${botSettings.prefixes[0]}${item.cmd}${lockTag}`);
     }
     lines.push("╰────────────────");

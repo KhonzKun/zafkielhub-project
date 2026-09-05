@@ -116,7 +116,7 @@ async function startBot() {
       connectionStatus = "connected";
       lastPairingCode = null;
       lastQRDataUrl = null;
-      logActivity("Bot berhasil terhubung ke WhatsApp ✅");
+      logActivity("Bot berhasil terhubung ke WhatsApp \u{2705}");
     } else if (connection === "close") {
       connectionStatus = "disconnected";
       const statusCode = lastDisconnect?.error?.output?.statusCode;
@@ -538,7 +538,7 @@ app.post("/api/admin/requests/:userId/approve", requireOwner, (req, res) => {
   };
 
   writeJSON(USERS_FILE, data);
-  logActivity(`Owner approved Admin promotion for @${target.username} ✅`);
+  logActivity(`Owner approved Admin promotion for @${target.username} \u{2705}`);
   res.json({ ok: true, message: `Approved Admin status for @${target.username}.` });
 });
 
@@ -709,7 +709,7 @@ app.post("/api/send/text", requireAdmin, async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`\n🌐 Dashboard running on http://localhost:${PORT}\n`);
+  console.log(`\n\u{1F310} Dashboard running on http://localhost:${PORT}\n`);
 });
 
 startBot().catch((err) => console.error("Fatal error starting bot:", err));
