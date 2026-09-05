@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ZafkielHub &mdash; WhatsApp Bot Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+  rel="stylesheet"
+/>
+<link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+<!-- Toast Notification Container -->
+<div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+<!-- Ambient Backdrop -->
+<div class="app-backdrop">
+  <div class="ambient-glow glow-top"></div>
+  <div class="ambient-glow glow-bottom"></div>
+</div>
+
+<!-- Video background (subtle) -->
+<video class="bg-video" autoplay muted loop playsinline poster="/assets/logo.png">
+  <source src="/assets/background.mp4" type="video/mp4" />
+</video>
+<div class="bg-overlay"></div>
+
+<!-- Backsound halaman login -->
+<audio id="audio-login" loop preload="none">
+  <source src="/assets/backsound-login.mp3" type="audio/mpeg" />
+</audio>
+
+<!-- ===== LAYAR LOGIN ===== -->
+<section id="view-login" class="auth-view">
+  <div class="auth-card">
+
+    <!-- Video / Media Hero Login -->
+    <div class="auth-media">
+      <video autoplay muted loop playsinline poster="/assets/logo.png">
+        <source src="/assets/login-hero.mp4" type="video/mp4" />
+      </video>
+    </div>
+
+    <div class="auth-header">
+      <h1 class="auth-title">ZafkielHub</h1>
+      <p class="auth-subtitle">WhatsApp Bot Control Center</p>
+    </div>
+
+    <form id="form-login" class="auth-form">
+      <div class="form-group">
+        <label for="login-username">Username</label>
+        <div class="input-wrapper">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <input type="text" id="login-username" name="username" placeholder="Masukkan username" autocomplete="username" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="login-password">Password</label>
+        <div class="input-wrapper">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <input type="password" id="login-password" name="password" placeholder="Masukkan password" autocomplete="current-password" required />
+        </div>
+      </div>
+
+      <p class="form-error" id="login-error"></p>
+      
+      <button type="submit" class="btn btn-primary btn-block">
+        <span>Masuk ke Dashboard</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </button>
+    </form>
+
+    <p class="auth-switch" id="to-register-wrap" style="display:none">
+      Belum punya akun? <a href="#" id="to-register">Buat Akun</a>
+    </p>
+
+    <div class="social-divider">
+      <span>Hubungi Developer</span>
+    </div>
+
+    <div class="social-buttons" id="login-social-buttons">
+      <a class="social-btn" id="link-tiktok" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298-.002.595.042.88.13V9.4a6.33 6.33 0 0 0-1-.08A6.34 6.34 0 0 0 3 15.66a6.34 6.34 0 0 0 10.82 4.49 6.27 6.27 0 0 0 1.94-4.52V8.45a8.28 8.28 0 0 0 4.83 1.55v-3.31Z"/></svg>
+        <span>TikTok Developer</span>
+      </a>
+      <a class="social-btn" id="link-telegram" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="m20.665 3.717-17.73 6.837c-1.21.486-1.203 1.161-.222 1.462l4.552 1.42 10.532-6.645c.498-.303.953-.14.579.192l-8.533 7.701h-.002l-.313 4.673c.458 0 .661-.21.916-.457l2.199-2.138 4.573 3.378c.842.464 1.448.225 1.658-.783l3-14.137c.307-1.23-.467-1.785-1.509-1.303Z"/></svg>
+        <span>Telegram Developer</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== LAYAR REGISTER ===== -->
+<section id="view-register" class="auth-view" style="display:none">
+  <div class="auth-card">
+    <div class="auth-media">
+      <video autoplay muted loop playsinline poster="/assets/logo.png">
+        <source src="/assets/login-hero.mp4" type="video/mp4" />
+      </video>
+    </div>
+
+    <div class="auth-header">
+      <h1 class="auth-title">Setup Akun Admin</h1>
+      <p class="auth-subtitle">Buat akun utama untuk mengelola dashboard</p>
+    </div>
+
+    <form id="form-register" class="auth-form">
+      <div class="form-group">
+        <label for="register-username">Username</label>
+        <div class="input-wrapper">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <input type="text" id="register-username" name="username" placeholder="Pilih username" autocomplete="username" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="register-password">Password</label>
+        <div class="input-wrapper">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <input type="password" id="register-password" name="password" placeholder="Minimal 6 karakter" autocomplete="new-password" minlength="6" required />
+        </div>
+      </div>
+
+      <p class="form-error" id="register-error"></p>
+      <button type="submit" class="btn btn-primary btn-block">
+        <span>Daftar &amp; Masuk</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </button>
+    </form>
+
+    <p class="auth-switch">
+      Sudah punya akun? <a href="#" id="to-login">Masuk</a>
+    </p>
+  </div>
+</section>
+
+<!-- ===== TRANSISI SETELAH LOGIN (9:16) ===== -->
+<section id="view-intro" class="intro-view" style="display:none">
+  <div class="intro-container">
+    <div class="intro-topbar">
+      <div class="intro-brand">
+        <img src="/assets/logo.png" alt="Logo" class="intro-brand-logo" onerror="this.style.display='none'" />
+        <span>ZafkielHub</span>
+      </div>
+      <button type="button" class="intro-skip-btn" id="btn-skip-intro" title="Lewati Transisi">
+        <span>Skip</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+      </button>
+    </div>
+
+    <div class="intro-media-frame">
+      <video id="intro-video" playsinline preload="auto">
+        <source src="/assets/transition.mp4" type="video/mp4" />
+      </video>
+    </div>
+
+    <div class="intro-welcome">
+      <div class="intro-welcome-dash"></div>
+      <h1 class="intro-welcome-title">WELCOME</h1>
+      <p class="intro-welcome-subtitle">ZafkielHub Bot Tools</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DASHBOARD ===== -->
+<section id="view-dashboard" style="display:none">
+
+  <!-- Topbar Header -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <img src="/assets/logo.png" class="brand-logo" alt="ZafkielHub logo" onerror="this.style.display='none'" />
+        <span class="brand-name">ZafkielHub</span>
+        <span class="brand-version" id="brand-version"></span>
+      </div>
+
+      <div class="topbar-right">
+        <div class="status-pill" id="status-pill">
+          <span class="status-dot"></span>
+          <span id="status-text">Memeriksa...</span>
+        </div>
+        <button class="btn btn-ghost btn-icon-text" id="btn-logout">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span>Keluar</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="dashboard-content">
+
+    <!-- ---- PAGE: HOME ---- -->
+    <div class="page" id="page-home">
+      <div class="page-head">
+        <div>
+          <h1 class="page-title">Dashboard Overview</h1>
+          <p class="page-desc">Pantau status bot dan statistik server secara langsung.</p>
+        </div>
+      </div>
+
+      <audio id="audio-home" loop preload="none">
+        <source src="/assets/backsound-home.mp3" type="audio/mpeg" />
+      </audio>
+
+      <!-- Banner Hero Image (Zafkiel Artwork) -->
+      <div class="hero-image-wrap">
+        <img src="/assets/home-hero.jpg" class="hero-image" alt="ZafkielHub Banner" />
+        <div class="hero-image-overlay"></div>
+      </div>
+
+      <!-- Stat Cards -->
+      <div class="card-grid">
+        <div class="stat-card">
+          <div class="stat-icon-wrap stat-icon-status">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20"/><path d="m17 5-5-3-5 3"/><path d="m17 19-5 3-5-3"/></svg>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Status Koneksi</span>
+            <span class="stat-value" id="home-status-value">&mdash;</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon-wrap stat-icon-user">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Logged as Admin</span>
+            <span class="stat-value" id="home-username-value">&mdash;</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon-wrap stat-icon-bot">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 9h.01"/><path d="M15 9h.01"/><path d="M8 13h8"/></svg>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Nama Bot</span>
+            <span class="stat-value" id="home-botname-value">&mdash;</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon-wrap stat-icon-version">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+          </div>
+          <div class="stat-body">
+            <span class="stat-label">Versi Engine</span>
+            <span class="stat-value" id="home-botversion-value">&mdash;</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activity Timeline -->
+      <div class="section-block">
+        <div class="section-header">
+          <div class="section-header-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            <h2>Aktivitas Terakhir</h2>
+          </div>
+        </div>
+        <div class="log-list" id="activity-log">
+          <p class="empty-state">Belum ada aktivitas tercatat.</p>
+        </div>
+      </div>
+
+      <!-- Support Card -->
+      <div class="support-card">
+        <div class="support-card-content">
+          <h3>Pusat Bantuan &amp; Bug Report</h3>
+          <p class="card-desc">Jika mengalami kendala teknis atau menemukan bug pada sistem bot, hubungi kontak developer resmi berikut.</p>
+          <div class="social-buttons social-buttons-horizontal">
+            <a class="social-btn" id="link-tiktok-2" href="#" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64c.298-.002.595.042.88.13V9.4a6.33 6.33 0 0 0-1-.08A6.34 6.34 0 0 0 3 15.66a6.34 6.34 0 0 0 10.82 4.49 6.27 6.27 0 0 0 1.94-4.52V8.45a8.28 8.28 0 0 0 4.83 1.55v-3.31Z"/></svg>
+              <span>TikTok Developer</span>
+            </a>
+            <a class="social-btn" id="link-telegram-2" href="#" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="m20.665 3.717-17.73 6.837c-1.21.486-1.203 1.161-.222 1.462l4.552 1.42 10.532-6.645c.498-.303.953-.14.579.192l-8.533 7.701h-.002l-.313 4.673c.458 0 .661-.21.916-.457l2.199-2.138 4.573 3.378c.842.464 1.448.225 1.658-.783l3-14.137c.307-1.23-.467-1.785-1.509-1.303Z"/></svg>
+              <span>Telegram Developer</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---- PAGE: MENU BOT ---- -->
+    <div class="page" id="page-menu" style="display:none">
+      <div class="page-head">
+        <div>
+          <h1 class="page-title">Manajemen Bot</h1>
+          <p class="page-desc">Kelola perintah WhatsApp, broadcast pesan, dan konfigurasi bot.</p>
+        </div>
+      </div>
+
+      <audio id="audio-menu" loop preload="none">
+        <source src="/assets/backsound-menu.mp3" type="audio/mpeg" />
+      </audio>
+
+      <!-- Video Hero Menu Bot -->
+      <div class="hero-video-wrap hero-video-wrap--medium" id="menu-hero-wrap">
+        <video class="hero-video" autoplay muted loop playsinline poster="/assets/logo.png">
+          <source src="/assets/menu-hero.mp4" type="video/mp4" />
+        </video>
+      </div>
+
+      <!-- Command List Card -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+          </div>
+          <div>
+            <h3>Katalog Command Bot</h3>
+            <p class="card-desc">Daftar perintah yang dapat dieksekusi pengguna di WhatsApp (prefix titik <code>.</code>). Ketik <code>.menu</code> di WhatsApp untuk info detail.</p>
+          </div>
+        </div>
+        <div class="command-list" id="command-list">
+          <p class="empty-state">Memuat katalog command...</p>
+        </div>
+      </div>
+
+      <!-- Quick Action: Kirim Stiker -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          </div>
+          <div>
+            <h3>Kirim Paket Stiker</h3>
+            <p class="card-desc">Kirim seluruh koleksi stiker di direktori <code>stickers/</code> ke satu nomor tujuan.</p>
+          </div>
+        </div>
+        <div class="inline-form">
+          <input type="text" id="sticker-target" placeholder="Format: 628xxxxxxxxxx" />
+          <button class="btn btn-primary" id="btn-send-sticker">
+            <span>Kirim Paket</span>
+          </button>
+        </div>
+        <p class="feedback" id="sticker-feedback"></p>
+      </div>
+
+      <!-- Quick Action: Kirim Pesan Berulang -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+          </div>
+          <div>
+            <h3>Kirim Pesan Berulang</h3>
+            <p class="card-desc">Kirim pesan yang sudah dikonfigurasi beberapa kali secara otomatis.</p>
+          </div>
+        </div>
+        <div class="inline-form inline-form-3">
+          <input type="text" id="text-target" placeholder="Nomor tujuan (628xxx)" />
+          <input type="number" id="text-count" placeholder="Jumlah" min="1" value="1" />
+          <button class="btn btn-primary" id="btn-send-text">
+            <span>Kirim</span>
+          </button>
+        </div>
+        <p class="feedback" id="text-feedback"></p>
+      </div>
+
+      <!-- Identitas Bot Form -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <div>
+            <h3>Identitas &amp; Profil Bot</h3>
+            <p class="card-desc">Atur nama bot, data owner, tautan media sosial developer, dan rules.</p>
+          </div>
+        </div>
+
+        <form id="form-bot-settings" class="settings-form">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Nama Bot</label>
+              <input type="text" name="botName" placeholder="Contoh: ZafkielBot" />
+            </div>
+            <div class="form-group">
+              <label>Nama Owner</label>
+              <input type="text" name="ownerName" placeholder="Nama pemilik bot" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Nomor Owner (Awali dengan 62)</label>
+            <input type="text" name="ownerNumber" placeholder="Contoh: 6281234567890" />
+          </div>
+
+          <div class="form-group">
+            <label>Rules &amp; Syarat Ketentuan Bot</label>
+            <textarea name="rules" rows="3" placeholder="Tuliskan tata tertib penggunaan bot..."></textarea>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Link TikTok Developer</label>
+              <input type="text" name="tiktokUrl" placeholder="https://tiktok.com/@..." />
+            </div>
+            <div class="form-group">
+              <label>Link Telegram Developer</label>
+              <input type="text" name="telegramUrl" placeholder="https://t.me/..." />
+            </div>
+          </div>
+
+          <p class="feedback" id="bot-settings-feedback"></p>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Simpan Identitas Bot</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Pengaturan Stiker & Broadcast Form -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-1 1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          <div>
+            <h3>Pengaturan Watermark &amp; Delay</h3>
+            <p class="card-desc">Atur nama paket stiker serta interval delay pengiriman pesan agar aman dari ban.</p>
+          </div>
+        </div>
+
+        <form id="form-settings" class="settings-form">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Nama Pack Stiker</label>
+              <input type="text" name="stickerPackName" placeholder="Contoh: Zafkiel Pack" />
+            </div>
+            <div class="form-group">
+              <label>Nama Author Stiker</label>
+              <input type="text" name="stickerAuthorName" placeholder="Contoh: By Zafkiel" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Delay Antar Stiker (Milidetik)</label>
+            <input type="number" name="stickerDelayMs" min="0" placeholder="1500" />
+            <span class="form-hint">Disarankan minimal 1000ms untuk mencegah rate-limit WhatsApp.</span>
+          </div>
+
+          <div class="form-group">
+            <label>Template Pesan Berulang</label>
+            <textarea name="repeatMessage" rows="2" placeholder="Isi pesan broadcast berulang..."></textarea>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Delay Pesan (ms)</label>
+              <input type="number" name="repeatDelayMs" min="0" placeholder="2000" />
+            </div>
+            <div class="form-group">
+              <label>Batas Maksimal Pengiriman</label>
+              <input type="number" name="repeatMaxCount" min="1" placeholder="50" />
+            </div>
+          </div>
+
+          <p class="feedback" id="settings-feedback"></p>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Simpan Konfigurasi</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ---- PAGE: PAIRING SENDER ---- -->
+    <div class="page" id="page-pairing" style="display:none">
+      <div class="sender-topbar">
+        <button class="icon-square-btn" id="btn-pairing-back" type="button" title="Kembali ke Home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <div class="sender-title-wrap">
+          <h1 class="page-title">Device Pairing</h1>
+          <p class="page-desc">Tautkan sesi WhatsApp bot ke server.</p>
+        </div>
+        <button class="icon-square-btn" id="btn-pairing-refresh" type="button" title="Refresh Status">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+        </button>
+      </div>
+
+      <!-- Tampilan Empty State Modern -->
+      <div class="sender-empty" id="sender-empty-state">
+        <div class="sender-empty-panel">
+          <div class="sender-empty-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          </div>
+          <span class="sender-empty-status">
+            <span class="dot-pulse"></span> Belum Terhubung
+          </span>
+          <h2>Tautkan Nomor Bot</h2>
+          <p>Hubungkan sesi WhatsApp nomor bot kamu untuk mengaktifkan seluruh fitur otomatisasi.</p>
+          <button class="btn btn-primary" id="btn-add-first-sender" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Mulai Tautkan Perangkat</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Panel Pairing Setup -->
+      <div id="sender-setup-panel" style="display:none">
+        
+        <!-- Segmented Tab Switcher -->
+        <div class="method-switch">
+          <button class="method-btn active" id="method-code-btn" data-method="code">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+            <span>Kode Pairing</span>
+          </button>
+          <button class="method-btn" id="method-qr-btn" data-method="qr">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg>
+            <span>Scan QR</span>
+          </button>
+        </div>
+
+        <div class="pairing-panel" id="pairing-panel">
+
+          <!-- Metode: KODE -->
+          <div id="pairing-method-code" class="pairing-method-content">
+            <div class="pairing-idle" id="pairing-idle">
+              <div class="pairing-icon-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+              </div>
+              <h3 class="pairing-method-title">Tautkan dengan Nomor Telepon</h3>
+              <p class="pairing-method-desc">Masukkan nomor WhatsApp yang akan dijadikan bot (diawali dengan kode negara 62).</p>
+              
+              <div class="inline-form">
+                <input type="text" id="pairing-phone" placeholder="Contoh: 6281234567890" />
+                <button class="btn btn-primary" id="btn-request-pairing">
+                  <span>Minta Kode</span>
+                </button>
+              </div>
+              <p class="feedback" id="pairing-feedback"></p>
+            </div>
+
+            <div class="pairing-code-wrap" id="pairing-code-wrap" style="display:none">
+              <span class="pairing-label">Kode Pairing WhatsApp</span>
+              <div class="pairing-code-box">
+                <span class="pairing-code" id="pairing-code">&mdash; &mdash; &mdash; &mdash;</span>
+              </div>
+              
+              <div class="pairing-step-box">
+                <div class="step-item">
+                  <span class="step-num">1</span>
+                  <span>Buka WhatsApp di HP nomor bot &rarr; <strong>Perangkat Tertaut</strong></span>
+                </div>
+                <div class="step-item">
+                  <span class="step-num">2</span>
+                  <span>Pilih <strong>Tautkan Perangkat</strong> &rarr; <strong>Tautkan dengan nomor telepon saja</strong></span>
+                </div>
+                <div class="step-item">
+                  <span class="step-num">3</span>
+                  <span>Masukkan 8 digit kode yang tertera di atas</span>
+                </div>
+              </div>
+
+              <div class="pairing-waiting" id="pairing-waiting">
+                <span class="dot-pulse"></span>
+                <span>Menunggu otentikasi dari perangkat...</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Metode: QR -->
+          <div id="pairing-method-qr" class="pairing-method-content" style="display:none">
+            <div class="qr-wrap" id="qr-wrap">
+              <div class="qr-frame" id="qr-frame">
+                <p class="qr-loading" id="qr-loading">Menyiapkan QR code...</p>
+                <img id="qr-image" style="display:none" alt="QR Code WhatsApp" />
+              </div>
+              <p class="pairing-instructions">
+                Buka WhatsApp di HP nomor bot &rarr; <strong>Perangkat Tertaut</strong> &rarr;
+                <strong>Tautkan Perangkat</strong>, lalu arahkan kamera ke QR code ini.
+              </p>
+              <div class="pairing-waiting" id="qr-waiting">
+                <span class="dot-pulse"></span>
+                <span>Menunggu scan QR dari WhatsApp...</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <button class="sender-fab" id="sender-fab" type="button" title="Tambah Sender">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </div>
+
+  </main>
+
+  <!-- Bottom Navigation Bar -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-page="home">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <span>Home</span>
+    </button>
+    <button class="nav-item" data-page="menu">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+      </div>
+      <span>Menu Bot</span>
+    </button>
+    <button class="nav-item" data-page="pairing">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+      </div>
+      <span>Pairing</span>
+    </button>
+  </nav>
+
+</section>
+
+<script src="/js/app.js"></script>
+</body>
+</html>

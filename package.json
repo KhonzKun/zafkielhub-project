@@ -1,0 +1,23 @@
+{
+  "name": "zafkielhub",
+  "version": "1.0.0",
+  "botVersion": "1.0.0",
+  "description": "ZafkielHub - Dashboard web (tema Zafkiel/ungu-merah) buat kontrol bot WhatsApp berbasis Baileys, lengkap dengan sistem command WA (.menu dkk), leveling member, dan panel pairing QR/kode.",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.9",
+    "pino": "^9.4.0",
+    "wa-sticker-formatter": "^4.4.4",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "bcryptjs": "^2.4.3",
+    "qrcode": "^1.5.4",
+    "jimp": "^1.6.1",
+    "mathjs": "^12.4.3",
+    "yt-search": "^2.11.1"
+  }
+}
