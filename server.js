@@ -293,6 +293,31 @@ app.post("/api/auth/logout", (req, res) => {
   req.session.destroy(() => res.json({ ok: true }));
 });
 
+app.post("/api/auth/change-password", requireAuth, async (req, res) => {
+  const { currentPassword, newPassword } = req.body || {};
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ error: "Password lama dan baru wajib diisi." });
+  }
+  if (newPassword.length < 6) {
+    return res.status(400).json({ error: "Password baru minimal 6 karakter." });
+  }
+
+  const data = getUsers();
+  const user = data.users.find((u) => u.username === req.session.username);
+  if (!user) {
+    return res.status(404).json({ error: "Akun tidak ditemukan." });
+  }
+
+  const match = await bcrypt.compare(currentPassword, user.passwordHash);
+  if (!match) {
+    return res.status(401).json({ error: "Password saat ini salah." });
+  }
+
+  user.passwordHash = await bcrypt.hash(newPassword, 10);
+  writeJSON(USERS_FILE, data);
+  res.json({ ok: true });
+});
+
 // ---- STATUS & LOG ----
 
 app.get("/api/status", requireAuth, (req, res) => {

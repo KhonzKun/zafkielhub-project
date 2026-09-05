@@ -82,6 +82,51 @@ const viewRegister = document.getElementById("view-register");
 const viewDashboard = document.getElementById("view-dashboard");
 const viewIntro = document.getElementById("view-intro");
 const introVideo = document.getElementById("intro-video");
+
+// ================================
+// PROFILE (overlay dari ikon topbar)
+// ================================
+let currentUsername = "";
+const viewProfile = document.getElementById("view-profile");
+const btnOpenProfile = document.getElementById("btn-open-profile");
+const btnProfileBack = document.getElementById("btn-profile-back");
+const btnProfileEdit = document.getElementById("btn-profile-edit");
+const btnProfileAvatar = document.getElementById("btn-profile-avatar");
+const btnChangePassword = document.getElementById("btn-change-password");
+
+function openProfile() {
+  document.getElementById("profile-name-value").textContent = currentUsername || "-";
+  document.getElementById("profile-username-value").textContent = currentUsername || "-";
+  show(viewProfile);
+  fadeInEl(viewProfile);
+}
+
+btnOpenProfile.addEventListener("click", openProfile);
+btnProfileBack.addEventListener("click", () => hide(viewProfile));
+
+btnProfileEdit.addEventListener("click", () => {
+  showToast({ type: "info", title: "Belum tersedia", message: "Edit profil menyusul, untuk sekarang ganti password lewat tombol di bawah." });
+});
+
+btnProfileAvatar.addEventListener("click", () => {
+  showToast({ type: "info", title: "Belum tersedia", message: "Upload foto profil belum didukung." });
+});
+
+btnChangePassword.addEventListener("click", async () => {
+  const currentPassword = prompt("Masukkan password saat ini:");
+  if (!currentPassword) return;
+  const newPassword = prompt("Masukkan password baru (minimal 6 karakter):");
+  if (!newPassword) return;
+  try {
+    await api("/api/auth/change-password", {
+      method: "POST",
+      body: JSON.stringify({ currentPassword, newPassword }),
+    });
+    showToast({ type: "success", title: "Berhasil", message: "Password sudah diganti." });
+  } catch (err) {
+    showToast({ type: "error", title: "Gagal", message: err.message });
+  }
+});
 const btnSkipIntro = document.getElementById("btn-skip-intro");
 
 const formLogin = document.getElementById("form-login");
@@ -102,6 +147,7 @@ const pages = {
   home: document.getElementById("page-home"),
   menu: document.getElementById("page-menu"),
   pairing: document.getElementById("page-pairing"),
+  history: document.getElementById("page-history"),
 };
 
 // ================================
@@ -144,6 +190,7 @@ function enterDashboard(status) {
   hide(viewRegister);
   show(viewDashboard);
   fadeInEl(viewDashboard);
+  currentUsername = status.username || "";
   document.getElementById("home-username-value").textContent = status.username || "-";
   document.getElementById("home-botname-value").textContent = status.botName || "-";
   document.getElementById("home-botversion-value").textContent = status.botVersion ? `v${status.botVersion}` : "-";
