@@ -1,6 +1,5 @@
 const { downloadMediaMessage } = require("@whiskeysockets/baileys");
 
-// Ambil teks dari berbagai tipe pesan WA
 function extractText(msg) {
   const m = msg.message || {};
   return (
