@@ -26,8 +26,8 @@ function writeJSON(file, data) {
 
 const DEFAULT_BOT_SETTINGS = {
   botName: "ZafkielHub",
-  ownerName: "Admin ZafkielHub",
-  ownerNumber: "628000000000",
+  ownerName: "Japz",
+  ownerNumber: "6281973869349",
   prefixes: [".", "!", "/"],
   rules: "1. Dilarang spam command.\n2. Dilarang toxic ke member lain.\n3. Gunakan bot dengan bijak, Waktu itu berharga~",
   dailyClaimCoin: 50,

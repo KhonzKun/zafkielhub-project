@@ -223,25 +223,76 @@ async function sendRepeatedText(targetNumber, count) {
 // EXPRESS APP
 // ================================
 const app = express();
-app.use(express.json({ limit: "5mb" }));
+app.use(express.json({ limit: "15mb" }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(
   session({
-    secret: "ganti-string-ini-dengan-yang-lebih-acak-di-produksi",
+    secret: "zafkielhub-session-secret-key-prod",
     resave: false,
     saveUninitialized: false,
-    cookie: { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7 }, // 7 hari
+    cookie: { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7 }, // 7 days
   })
 );
 
+// Ensure avatars upload folder exists
+const AVATARS_DIR = path.join(__dirname, "public", "uploads", "avatars");
+if (!fs.existsSync(AVATARS_DIR)) fs.mkdirSync(AVATARS_DIR, { recursive: true });
+
+function getCurrentUser(req) {
+  if (!req.session || !req.session.username) return null;
+  const data = getUsers();
+  let user = null;
+  if (req.session.userId) {
+    user = data.users.find((u) => u.id === req.session.userId);
+  }
+  if (!user) {
+    user = data.users.find((u) => u.username.toLowerCase() === req.session.username.toLowerCase());
+  }
+  return user || null;
+}
+
+function saveUserRecord(updatedUser) {
+  const data = getUsers();
+  const index = data.users.findIndex((u) => u.id === updatedUser.id || u.username === updatedUser.username);
+  if (index !== -1) {
+    data.users[index] = updatedUser;
+  } else {
+    data.users.push(updatedUser);
+  }
+  writeJSON(USERS_FILE, data);
+}
+
 function requireAuth(req, res, next) {
-  if (req.session && req.session.username) return next();
-  return res.status(401).json({ error: "Belum login." });
+  const user = getCurrentUser(req);
+  if (!user) {
+    return res.status(401).json({ error: "Authentication required. Please log in." });
+  }
+  req.user = user;
+  next();
+}
+
+function requireAdmin(req, res, next) {
+  requireAuth(req, res, () => {
+    const role = req.user.role || "member";
+    if (role !== "admin" && role !== "owner") {
+      return res.status(403).json({ error: "Access denied. Admin or Owner privileges required." });
+    }
+    next();
+  });
+}
+
+function requireOwner(req, res, next) {
+  requireAuth(req, res, () => {
+    const role = req.user.role || "member";
+    if (role !== "owner") {
+      return res.status(403).json({ error: "Access denied. Only the Owner can perform this action." });
+    }
+    next();
+  });
 }
 
 // ---- AUTH ----
 
-// Cek apakah sudah ada akun terdaftar (buat nentuin tampilkan Login vs Register)
 app.get("/api/auth/exists", (req, res) => {
   const { users } = getUsers();
   res.json({ exists: users.length > 0 });
@@ -250,43 +301,98 @@ app.get("/api/auth/exists", (req, res) => {
 app.post("/api/auth/register", async (req, res) => {
   const { username, password } = req.body || {};
   if (!username || !password) {
-    return res.status(400).json({ error: "Username dan password wajib diisi." });
+    return res.status(400).json({ error: "Username and password are required." });
+  }
+  const cleanUsername = String(username).trim();
+  if (cleanUsername.length < 3) {
+    return res.status(400).json({ error: "Username must be at least 3 characters." });
   }
   if (password.length < 6) {
-    return res.status(400).json({ error: "Password minimal 6 karakter." });
+    return res.status(400).json({ error: "Password must be at least 6 characters." });
   }
 
   const data = getUsers();
-  if (data.users.length > 0) {
-    return res
-      .status(403)
-      .json({ error: "Akun admin sudah ada. Silakan login." });
+  const exists = data.users.some(
+    (u) => u.username.toLowerCase() === cleanUsername.toLowerCase()
+  );
+  if (exists) {
+    return res.status(400).json({ error: "Username already taken. Please choose another." });
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
-  data.users.push({ username, passwordHash });
+  const isFirstUser = data.users.length === 0;
+  const role = isFirstUser ? "owner" : "member";
+  const id = "usr_" + Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
+
+  const newUser = {
+    id,
+    username: cleanUsername,
+    passwordHash,
+    role,
+    avatar: "",
+    adminRequest: null,
+    createdAt: new Date().toISOString(),
+  };
+
+  data.users.push(newUser);
   writeJSON(USERS_FILE, data);
 
-  req.session.username = username;
-  res.json({ ok: true, username });
+  req.session.userId = newUser.id;
+  req.session.username = newUser.username;
+  req.session.role = newUser.role;
+
+  logActivity(`New ${role} registered: @${newUser.username}`);
+
+  res.json({
+    ok: true,
+    user: {
+      id: newUser.id,
+      username: newUser.username,
+      role: newUser.role,
+      avatar: newUser.avatar,
+    },
+  });
 });
 
 app.post("/api/auth/login", async (req, res) => {
   const { username, password } = req.body || {};
+  if (!username || !password) {
+    return res.status(400).json({ error: "Username and password are required." });
+  }
+
   const data = getUsers();
-  const user = data.users.find((u) => u.username === username);
+  const user = data.users.find(
+    (u) => u.username.toLowerCase() === String(username).trim().toLowerCase()
+  );
 
   if (!user) {
-    return res.status(401).json({ error: "Username atau password salah." });
+    return res.status(401).json({ error: "Invalid username or password." });
   }
 
   const match = await bcrypt.compare(password, user.passwordHash);
   if (!match) {
-    return res.status(401).json({ error: "Username atau password salah." });
+    return res.status(401).json({ error: "Invalid username or password." });
   }
 
-  req.session.username = username;
-  res.json({ ok: true, username });
+  // Ensure ID and role exist
+  if (!user.id) {
+    user.id = "usr_" + Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
+    writeJSON(USERS_FILE, data);
+  }
+
+  req.session.userId = user.id;
+  req.session.username = user.username;
+  req.session.role = user.role || "member";
+
+  res.json({
+    ok: true,
+    user: {
+      id: user.id,
+      username: user.username,
+      role: user.role || "member",
+      avatar: user.avatar || "",
+    },
+  });
 });
 
 app.post("/api/auth/logout", (req, res) => {
@@ -296,77 +402,235 @@ app.post("/api/auth/logout", (req, res) => {
 app.post("/api/auth/change-password", requireAuth, async (req, res) => {
   const { currentPassword, newPassword } = req.body || {};
   if (!currentPassword || !newPassword) {
-    return res.status(400).json({ error: "Password lama dan baru wajib diisi." });
+    return res.status(400).json({ error: "Current and new passwords are required." });
   }
   if (newPassword.length < 6) {
-    return res.status(400).json({ error: "Password baru minimal 6 karakter." });
+    return res.status(400).json({ error: "New password must be at least 6 characters." });
+  }
+
+  const match = await bcrypt.compare(currentPassword, req.user.passwordHash);
+  if (!match) {
+    return res.status(401).json({ error: "Current password is incorrect." });
+  }
+
+  req.user.passwordHash = await bcrypt.hash(newPassword, 10);
+  saveUserRecord(req.user);
+  res.json({ ok: true, message: "Password successfully updated." });
+});
+
+// ---- CURRENT USER & PROFILE ----
+
+app.get("/api/me", requireAuth, (req, res) => {
+  const u = req.user;
+  res.json({
+    id: u.id,
+    username: u.username,
+    role: u.role || "member",
+    avatar: u.avatar || "",
+    adminRequest: u.adminRequest || null,
+    createdAt: u.createdAt,
+  });
+});
+
+app.post("/api/profile/avatar", requireAuth, async (req, res) => {
+  const { avatarData, avatarUrl } = req.body || {};
+  try {
+    let finalUrl = avatarUrl || "";
+    if (avatarData && avatarData.startsWith("data:image/")) {
+      const match = avatarData.match(/^data:image\/([a-zA-Z0-9]+);base64,(.+)$/);
+      if (match) {
+        const ext = match[1] === "jpeg" ? "jpg" : match[1];
+        const base64Data = match[2];
+        const fileName = `avatar_${req.user.id}_${Date.now()}.${ext}`;
+        const filePath = path.join(AVATARS_DIR, fileName);
+        fs.writeFileSync(filePath, Buffer.from(base64Data, "base64"));
+        finalUrl = `/uploads/avatars/${fileName}`;
+      }
+    }
+
+    if (!finalUrl && !avatarData) {
+      return res.status(400).json({ error: "No avatar image provided." });
+    }
+
+    req.user.avatar = finalUrl;
+    saveUserRecord(req.user);
+    res.json({ ok: true, avatar: finalUrl });
+  } catch (err) {
+    res.status(500).json({ error: `Failed to save avatar: ${err.message}` });
+  }
+});
+
+app.post("/api/role/request-admin", requireAuth, (req, res) => {
+  if (req.user.role === "owner" || req.user.role === "admin") {
+    return res.status(400).json({ error: "You are already an Admin or Owner." });
+  }
+
+  req.user.adminRequest = {
+    status: "pending",
+    requestedAt: new Date().toISOString(),
+  };
+  saveUserRecord(req.user);
+
+  logActivity(`User @${req.user.username} submitted an Admin role request (pending Owner approval).`);
+  res.json({ ok: true, status: "pending", message: "Admin role request submitted to the Owner." });
+});
+
+// ---- OWNER ONLY: USER & REQUEST MANAGEMENT ----
+
+app.get("/api/admin/users", requireOwner, (req, res) => {
+  const data = getUsers();
+  const sanitized = data.users.map((u) => ({
+    id: u.id,
+    username: u.username,
+    role: u.role || "member",
+    avatar: u.avatar || "",
+    adminRequest: u.adminRequest || null,
+    createdAt: u.createdAt,
+  }));
+  res.json(sanitized);
+});
+
+app.post("/api/admin/users/:userId/role", requireOwner, (req, res) => {
+  const { role } = req.body || {};
+  const validRoles = ["owner", "admin", "premium", "member"];
+  if (!validRoles.includes(role)) {
+    return res.status(400).json({ error: "Invalid role specified." });
   }
 
   const data = getUsers();
-  const user = data.users.find((u) => u.username === req.session.username);
-  if (!user) {
-    return res.status(404).json({ error: "Akun tidak ditemukan." });
+  const target = data.users.find((u) => u.id === req.params.userId || u.username === req.params.userId);
+  if (!target) {
+    return res.status(404).json({ error: "User not found." });
   }
 
-  const match = await bcrypt.compare(currentPassword, user.passwordHash);
-  if (!match) {
-    return res.status(401).json({ error: "Password saat ini salah." });
+  const oldRole = target.role;
+  target.role = role;
+  if (target.adminRequest && target.adminRequest.status === "pending") {
+    target.adminRequest.status = (role === "admin" || role === "owner") ? "approved" : "rejected";
+    target.adminRequest.reviewedAt = new Date().toISOString();
   }
 
-  user.passwordHash = await bcrypt.hash(newPassword, 10);
   writeJSON(USERS_FILE, data);
-  res.json({ ok: true });
+  logActivity(`Owner updated role for @${target.username}: ${oldRole} -> ${role}`);
+
+  res.json({
+    ok: true,
+    user: {
+      id: target.id,
+      username: target.username,
+      role: target.role,
+    },
+  });
+});
+
+app.post("/api/admin/requests/:userId/approve", requireOwner, (req, res) => {
+  const data = getUsers();
+  const target = data.users.find((u) => u.id === req.params.userId || u.username === req.params.userId);
+  if (!target) {
+    return res.status(404).json({ error: "User not found." });
+  }
+
+  target.role = "admin";
+  target.adminRequest = {
+    ...(target.adminRequest || {}),
+    status: "approved",
+    approvedAt: new Date().toISOString(),
+  };
+
+  writeJSON(USERS_FILE, data);
+  logActivity(`Owner approved Admin promotion for @${target.username} ✅`);
+  res.json({ ok: true, message: `Approved Admin status for @${target.username}.` });
+});
+
+app.post("/api/admin/requests/:userId/reject", requireOwner, (req, res) => {
+  const data = getUsers();
+  const target = data.users.find((u) => u.id === req.params.userId || u.username === req.params.userId);
+  if (!target) {
+    return res.status(404).json({ error: "User not found." });
+  }
+
+  target.adminRequest = {
+    ...(target.adminRequest || {}),
+    status: "rejected",
+    rejectedAt: new Date().toISOString(),
+  };
+
+  writeJSON(USERS_FILE, data);
+  logActivity(`Owner rejected Admin request for @${target.username}.`);
+  res.json({ ok: true, message: `Rejected Admin request for @${target.username}.` });
 });
 
 // ---- STATUS & LOG ----
 
 app.get("/api/status", requireAuth, (req, res) => {
+  const u = req.user;
+  const bSettings = botStore.getBotSettings();
   res.json({
-    username: req.session.username,
+    userId: u.id,
+    username: u.username,
+    role: u.role || "member",
+    avatar: u.avatar || "",
+    adminRequest: u.adminRequest || null,
     connectionStatus,
     lastPairingCode,
     lastQRDataUrl,
-    log: activityLog.slice(0, 15),
+    log: activityLog.slice(0, 20),
     botVersion: pkg.botVersion || pkg.version,
-    botName: botStore.getBotSettings().botName,
+    botName: bSettings.botName,
+    ownerName: bSettings.ownerName,
+    ownerNumber: bSettings.ownerNumber,
+    tiktokUrl: bSettings.tiktokUrl,
+    telegramUrl: bSettings.telegramUrl,
   });
 });
 
-// ---- BOT SETTINGS (nama bot, owner, tombol TikTok/Telegram, rules) ----
+// ---- BOT SETTINGS (Bot Identity: Owner Only) ----
 
 app.get("/api/bot-settings", requireAuth, (req, res) => {
   res.json(botStore.getBotSettings());
 });
 
-app.post("/api/bot-settings", requireAuth, (req, res) => {
-  const allowedKeys = ["botName", "ownerName", "ownerNumber", "rules", "tiktokUrl", "telegramUrl", "dailyClaimCoin", "dailyClaimExp"];
+app.post("/api/bot-settings", requireOwner, (req, res) => {
+  const allowedKeys = [
+    "botName",
+    "ownerName",
+    "ownerNumber",
+    "rules",
+    "tiktokUrl",
+    "telegramUrl",
+    "dailyClaimCoin",
+    "dailyClaimExp",
+  ];
   const partial = {};
   for (const key of allowedKeys) {
     if (req.body[key] !== undefined) partial[key] = req.body[key];
   }
-  res.json(botStore.saveBotSettings(partial));
+  const updated = botStore.saveBotSettings(partial);
+  logActivity(`Owner updated Bot Identity configuration.`);
+  res.json(updated);
 });
 
-// Publik (dipakai halaman login buat nampilin tombol TikTok/Telegram developer,
-// tanpa perlu login dulu)
+// Public info
 app.get("/api/public-info", (req, res) => {
   const s = botStore.getBotSettings();
   res.json({
     botName: s.botName,
+    ownerName: s.ownerName,
+    ownerNumber: s.ownerNumber,
     tiktokUrl: s.tiktokUrl,
     telegramUrl: s.telegramUrl,
     botVersion: pkg.botVersion || pkg.version,
   });
 });
 
-// ---- MEMBER (leaderboard, dsb - buat ditampilkan di dashboard kalau perlu) ----
+// ---- MEMBER (leaderboard) ----
 
 app.get("/api/members/top", requireAuth, (req, res) => {
   const field = req.query.field === "coin" ? "coin" : "exp";
   res.json(botStore.getTopBy(field, 15));
 });
 
-// ---- DAFTAR MENU (dipakai halaman "Menu Bot" buat nampilin daftar command) ----
+// ---- MENU LIST ----
 app.get("/api/menu", requireAuth, (req, res) => {
   const { MENU_CATEGORIES } = require("./bot/menu");
   res.json(MENU_CATEGORIES);
@@ -377,10 +641,10 @@ app.get("/api/menu", requireAuth, (req, res) => {
 app.post("/api/pairing/request", requireAuth, async (req, res) => {
   const { phoneNumber } = req.body || {};
   if (!phoneNumber) {
-    return res.status(400).json({ error: "Nomor HP wajib diisi." });
+    return res.status(400).json({ error: "Phone number is required." });
   }
   if (connectionStatus === "connected") {
-    return res.status(400).json({ error: "Bot sudah terhubung. Tidak perlu pairing lagi." });
+    return res.status(400).json({ error: "Bot is already connected. Pairing is not needed." });
   }
 
   try {
@@ -391,13 +655,13 @@ app.post("/api/pairing/request", requireAuth, async (req, res) => {
   }
 });
 
-// ---- SETTINGS (Menu Bot) ----
+// ---- SETTINGS (Watermark & Delay) ----
 
 app.get("/api/settings", requireAuth, (req, res) => {
   res.json(getSettings());
 });
 
-app.post("/api/settings", requireAuth, (req, res) => {
+app.post("/api/settings", requireAdmin, (req, res) => {
   const allowedKeys = [
     "stickerPackName",
     "stickerAuthorName",
@@ -414,12 +678,12 @@ app.post("/api/settings", requireAuth, (req, res) => {
   res.json(updated);
 });
 
-// ---- AKSI KIRIM (Menu Bot) ----
+// ---- ACTIONS (Sticker & Repeat Text: Admin or Owner Only) ----
 
-app.post("/api/send/sticker", requireAuth, async (req, res) => {
+app.post("/api/send/sticker", requireAdmin, async (req, res) => {
   const { targetNumber } = req.body || {};
   if (!targetNumber) {
-    return res.status(400).json({ error: "Nomor tujuan wajib diisi." });
+    return res.status(400).json({ error: "Destination phone number is required." });
   }
   try {
     const count = await sendStickerPack(targetNumber);
@@ -429,10 +693,10 @@ app.post("/api/send/sticker", requireAuth, async (req, res) => {
   }
 });
 
-app.post("/api/send/text", requireAuth, async (req, res) => {
+app.post("/api/send/text", requireAdmin, async (req, res) => {
   const { targetNumber, count } = req.body || {};
   if (!targetNumber) {
-    return res.status(400).json({ error: "Nomor tujuan wajib diisi." });
+    return res.status(400).json({ error: "Destination phone number is required." });
   }
   const parsedCount = Math.max(1, parseInt(count, 10) || 1);
   try {
@@ -445,7 +709,7 @@ app.post("/api/send/text", requireAuth, async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`\n🌐 Dashboard jalan di http://localhost:${PORT}\n`);
+  console.log(`\n🌐 Dashboard running on http://localhost:${PORT}\n`);
 });
 
-startBot().catch((err) => console.error("Fatal error saat start bot:", err));
+startBot().catch((err) => console.error("Fatal error starting bot:", err));
