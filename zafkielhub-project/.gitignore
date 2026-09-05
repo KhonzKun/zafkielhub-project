@@ -1,7 +1,0 @@
-node_modules/
-auth/
-data/
-.env
-*.log
-
-.vercel
