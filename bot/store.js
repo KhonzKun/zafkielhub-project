@@ -33,8 +33,8 @@ const DEFAULT_BOT_SETTINGS = {
   dailyClaimCoin: 50,
   dailyClaimExp: 20,
   expPerCommand: 3,
-  tiktokUrl: "https://www.tiktok.com/@rakabukanrakak",
-  telegramUrl: "https://t.me/",
+  tiktokUrl: "https://www.tiktok.com/@zafkielxkurumi",
+  telegramUrl: "https://t.me/JapzkiBW",
 };
 
 function getBotSettings() {
