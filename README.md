@@ -161,3 +161,4 @@ wa-bot/
 ├── data/                     # users.json, members.json, vouchers.json, dll (otomatis)
 └── auth/                     # Sesi login WhatsApp (otomatis)
 ```
+
