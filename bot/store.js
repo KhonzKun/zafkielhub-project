@@ -1,6 +1,3 @@
-// ================================
-// PENYIMPANAN MEMBER (level, coin, premium, dll) - file JSON lokal
-// ================================
 const fs = require("fs");
 const path = require("path");
 
@@ -29,7 +26,8 @@ const DEFAULT_BOT_SETTINGS = {
   ownerName: "Japz",
   ownerNumber: "6281973869349",
   prefixes: [".", "!", "/"],
-  rules: "1. Dilarang spam command.\n2. Dilarang toxic ke member lain.\n3. Gunakan bot dengan bijak, Waktu itu berharga~",
+  rules:
+    "1. Dilarang spam command.\n2. Dilarang toxic ke member lain.\n3. Gunakan bot dengan bijak, Waktu itu berharga~",
   dailyClaimCoin: 50,
   dailyClaimExp: 20,
   expPerCommand: 3,
@@ -56,7 +54,6 @@ function saveMembersRaw(data) {
 }
 
 function levelFromExp(exp) {
-  // makin tinggi level, makin banyak exp yang dibutuhkan
   return Math.floor(0.15 * Math.sqrt(exp)) + 1;
 }
 

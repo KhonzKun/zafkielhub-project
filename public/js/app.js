@@ -1,11 +1,3 @@
-// ==========================================================================
-// ZAFKIELHUB - CLIENT APPLICATION SCRIPT
-// English Role-Based Management System & WhatsApp Bot Controller
-// ==========================================================================
-
-// ================================
-// API & DOM HELPERS
-// ================================
 async function api(path, options = {}) {
   const res = await fetch(path, {
     headers: { "Content-Type": "application/json" },
@@ -16,8 +8,12 @@ async function api(path, options = {}) {
   return data;
 }
 
-function show(el) { if (el) el.style.display = ""; }
-function hide(el) { if (el) el.style.display = "none"; }
+function show(el) {
+  if (el) el.style.display = "";
+}
+function hide(el) {
+  if (el) el.style.display = "none";
+}
 
 function escapeHtml(str) {
   const div = document.createElement("div");
@@ -28,7 +24,7 @@ function escapeHtml(str) {
 function fadeInEl(el) {
   if (!el) return;
   el.classList.remove("zh-fade-in");
-  void el.offsetWidth; // Force reflow
+  void el.offsetWidth; 
   el.classList.add("zh-fade-in");
 }
 
@@ -36,27 +32,37 @@ function formatDate(isoStr) {
   if (!isoStr) return "N/A";
   try {
     const d = new Date(isoStr);
-    return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    return d.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
   } catch {
     return isoStr;
   }
 }
 
-// ================================
-// TOAST & DESKTOP NOTIFICATIONS
-// ================================
+
 const toastContainer = document.getElementById("toast-container");
 
-function showToast({ type = "info", title = "", message = "", duration = 5000 }) {
+function showToast({
+  type = "info",
+  title = "",
+  message = "",
+  duration = 5000,
+}) {
   if (!toastContainer) return;
   const card = document.createElement("div");
   card.className = `toast-card toast-${type}`;
 
   const icons = {
-    success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>',
+    success:
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>',
     info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
-    warning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
-    error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+    warning:
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+    error:
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
   };
 
   card.innerHTML = `
@@ -102,9 +108,7 @@ function sendDesktopNotification(title, options = {}) {
   }
 }
 
-// ================================
-// APPLICATION STATE
-// ================================
+
 let currentUser = {
   id: "",
   username: "",
@@ -127,9 +131,6 @@ let prevConnectionStatus = null;
 let statusInterval = null;
 let audioUnlocked = false;
 
-// ================================
-// DOM ELEMENTS
-// ================================
 const viewLogin = document.getElementById("view-login");
 const viewRegister = document.getElementById("view-register");
 const viewDashboard = document.getElementById("view-dashboard");
@@ -151,7 +152,6 @@ const btnLogout = document.getElementById("btn-logout");
 const statusPill = document.getElementById("status-pill");
 const statusText = document.getElementById("status-text");
 
-// Profile elements
 const btnOpenProfile = document.getElementById("btn-open-profile");
 const btnProfileBack = document.getElementById("btn-profile-back");
 const btnProfileClose = document.getElementById("btn-profile-close");
@@ -169,9 +169,7 @@ const pages = {
   history: document.getElementById("page-history"),
 };
 
-// ================================
-// INITIALIZATION
-// ================================
+
 async function init() {
   await loadPublicInfo();
   try {
@@ -266,19 +264,14 @@ function playIntroThenDashboard(status) {
   }
 }
 
-// ================================
-// USER UI & ROLE-BASED ACCESS CONTROL
-// ================================
+
 function updateUserUI(user) {
-  // Topbar
   const topbarUser = document.getElementById("topbar-username-text");
   if (topbarUser) topbarUser.textContent = user.username || "User";
 
-  // Home overview
   const homeUser = document.getElementById("home-username-value");
   if (homeUser) homeUser.textContent = user.username || "User";
 
-  // Profile modal
   const profileUser = document.getElementById("profile-username-val");
   if (profileUser) profileUser.textContent = user.username || "User";
 
@@ -289,7 +282,6 @@ function updateUserUI(user) {
       : "Active Member";
   }
 
-  // Update avatar displays
   updateAvatarUI(user.avatar);
 }
 
@@ -302,13 +294,22 @@ function updateAvatarUI(avatarUrl) {
   const profileFallback = document.getElementById("profile-avatar-fallback");
 
   if (avatarUrl) {
-    if (topbarImg) { topbarImg.src = avatarUrl; show(topbarImg); }
+    if (topbarImg) {
+      topbarImg.src = avatarUrl;
+      show(topbarImg);
+    }
     if (topbarFallback) hide(topbarFallback);
 
-    if (homeImg) { homeImg.src = avatarUrl; show(homeImg); }
+    if (homeImg) {
+      homeImg.src = avatarUrl;
+      show(homeImg);
+    }
     if (homeFallback) hide(homeFallback);
 
-    if (profileImg) { profileImg.src = avatarUrl; show(profileImg); }
+    if (profileImg) {
+      profileImg.src = avatarUrl;
+      show(profileImg);
+    }
     if (profileFallback) hide(profileFallback);
   } else {
     if (topbarImg) hide(topbarImg);
@@ -332,7 +333,6 @@ function applyRolePermissions(role, user) {
     member: { title: "Member \u{1F464}", class: "role-badge-member" },
   }[roleKey] || { title: "Member \u{1F464}", class: "role-badge-member" };
 
-  // Update role badges
   const topbarRole = document.getElementById("topbar-role-badge");
   if (topbarRole) {
     topbarRole.textContent = roleMeta.title;
@@ -351,21 +351,18 @@ function applyRolePermissions(role, user) {
     profileRole.className = `role-badge ${roleMeta.class}`;
   }
 
-  // --- Home Upgrade Banner ---
   const homeUpgradeBanner = document.getElementById("home-upgrade-banner");
   if (homeUpgradeBanner) {
     if (roleKey === "member") show(homeUpgradeBanner);
     else hide(homeUpgradeBanner);
   }
 
-  // --- Menu Bot Role Notice ---
   const menuRoleNotice = document.getElementById("menu-role-notice");
   if (menuRoleNotice) {
     if (roleKey === "member") show(menuRoleNotice);
     else hide(menuRoleNotice);
   }
 
-  // --- Send Sticker Pack Card ---
   const stickerBody = document.getElementById("sticker-feature-body");
   const stickerLocked = document.getElementById("sticker-locked-overlay");
   if (roleKey === "owner" || roleKey === "admin") {
@@ -376,7 +373,6 @@ function applyRolePermissions(role, user) {
     show(stickerLocked);
   }
 
-  // --- Send Repeated Text Card ---
   const textBody = document.getElementById("text-feature-body");
   const textLocked = document.getElementById("text-locked-overlay");
   if (roleKey === "owner" || roleKey === "admin") {
@@ -387,25 +383,29 @@ function applyRolePermissions(role, user) {
     show(textLocked);
   }
 
-  // --- Bot Identity Card (Owner Only) ---
   const botIdentityForm = document.getElementById("form-bot-settings");
-  const botIdentityLocked = document.getElementById("bot-identity-locked-overlay");
+  const botIdentityLocked = document.getElementById(
+    "bot-identity-locked-overlay",
+  );
   const botIdentityActions = document.getElementById("bot-settings-actions");
   if (roleKey === "owner") {
     hide(botIdentityLocked);
     show(botIdentityActions);
     if (botIdentityForm) {
-      Array.from(botIdentityForm.elements).forEach((el) => (el.disabled = false));
+      Array.from(botIdentityForm.elements).forEach(
+        (el) => (el.disabled = false),
+      );
     }
   } else {
     show(botIdentityLocked);
     hide(botIdentityActions);
     if (botIdentityForm) {
-      Array.from(botIdentityForm.elements).forEach((el) => (el.disabled = true));
+      Array.from(botIdentityForm.elements).forEach(
+        (el) => (el.disabled = true),
+      );
     }
   }
 
-  // --- Delays & Watermark Config (Admin & Owner) ---
   const settingsForm = document.getElementById("form-settings");
   const settingsLocked = document.getElementById("settings-locked-overlay");
   const settingsActions = document.getElementById("settings-actions");
@@ -423,7 +423,6 @@ function applyRolePermissions(role, user) {
     }
   }
 
-  // --- Owner User Management Panel ---
   const cardOwnerManagement = document.getElementById("card-owner-management");
   if (cardOwnerManagement) {
     if (roleKey === "owner") {
@@ -434,7 +433,6 @@ function applyRolePermissions(role, user) {
     }
   }
 
-  // --- Admin Request Button in Profile ---
   updateAdminRequestButtonState(user);
 }
 
@@ -446,7 +444,9 @@ function updateAdminRequestButtonState(user) {
 
   if (role === "owner" || role === "admin") {
     if (btn) btn.style.display = "none";
-    if (hint) hint.textContent = "You currently hold elevated administrative privileges.";
+    if (hint)
+      hint.textContent =
+        "You currently hold elevated administrative privileges.";
     return;
   }
 
@@ -456,25 +456,29 @@ function updateAdminRequestButtonState(user) {
   if (reqStatus === "pending") {
     if (btn) btn.disabled = true;
     if (btnText) btnText.textContent = "Request Pending Approval \u{23F3}";
-    if (hint) hint.textContent = "Your Admin promotion request is pending Owner review.";
+    if (hint)
+      hint.textContent =
+        "Your Admin promotion request is pending Owner review.";
   } else if (reqStatus === "approved") {
     if (btn) btn.disabled = true;
     if (btnText) btnText.textContent = "Admin Approved \u{2705}";
-    if (hint) hint.textContent = "Your account has been granted Admin permissions.";
+    if (hint)
+      hint.textContent = "Your account has been granted Admin permissions.";
   } else if (reqStatus === "rejected") {
     if (btn) btn.disabled = false;
     if (btnText) btnText.textContent = "Re-request Admin Role";
-    if (hint) hint.textContent = "Previous request was declined. You may re-submit or contact the Owner.";
+    if (hint)
+      hint.textContent =
+        "Previous request was declined. You may re-submit or contact the Owner.";
   } else {
     if (btn) btn.disabled = false;
     if (btnText) btnText.textContent = "Request Admin Role";
-    if (hint) hint.textContent = "Submit a request to the Owner for Admin authorization.";
+    if (hint)
+      hint.textContent =
+        "Submit a request to the Owner for Admin authorization.";
   }
 }
 
-// ================================
-// PROFILE VIEW & AVATAR UPLOAD
-// ================================
 function openProfile() {
   updateUserUI(currentUser);
   updateAdminRequestButtonState(currentUser);
@@ -490,7 +494,6 @@ btnOpenProfile.addEventListener("click", openProfile);
 btnProfileBack.addEventListener("click", closeProfile);
 btnProfileClose.addEventListener("click", closeProfile);
 
-// Avatar Photo Upload Handler ("fotoprolifes")
 btnChangeAvatar.addEventListener("click", () => {
   avatarFileInput.click();
 });
@@ -552,11 +555,13 @@ avatarFileInput.addEventListener("change", async (e) => {
   reader.readAsDataURL(file);
 });
 
-// Admin Request action
 async function handleAdminRequest() {
   try {
     const res = await api("/api/role/request-admin", { method: "POST" });
-    currentUser.adminRequest = { status: "pending", requestedAt: new Date().toISOString() };
+    currentUser.adminRequest = {
+      status: "pending",
+      requestedAt: new Date().toISOString(),
+    };
     updateAdminRequestButtonState(currentUser);
 
     showToast({
@@ -574,13 +579,14 @@ async function handleAdminRequest() {
   }
 }
 
-if (btnRequestAdminRole) btnRequestAdminRole.addEventListener("click", handleAdminRequest);
-if (homeBtnRequestAdmin) homeBtnRequestAdmin.addEventListener("click", () => {
-  openProfile();
-  handleAdminRequest();
-});
+if (btnRequestAdminRole)
+  btnRequestAdminRole.addEventListener("click", handleAdminRequest);
+if (homeBtnRequestAdmin)
+  homeBtnRequestAdmin.addEventListener("click", () => {
+    openProfile();
+    handleAdminRequest();
+  });
 
-// Change Password Handler
 formChangePassword.addEventListener("submit", async (e) => {
   e.preventDefault();
   const feedback = document.getElementById("change-pwd-feedback");
@@ -612,22 +618,27 @@ formChangePassword.addEventListener("submit", async (e) => {
   }
 });
 
-// ================================
-// OWNER MANAGEMENT PANEL
-// ================================
+
 async function loadOwnerManagementData() {
   if (currentUser.role !== "owner") return;
 
-  const reqListContainer = document.getElementById("owner-pending-requests-list");
+  const reqListContainer = document.getElementById(
+    "owner-pending-requests-list",
+  );
   const usersTableBody = document.getElementById("owner-users-table-body");
 
   try {
     const users = await api("/api/admin/users");
 
-    // 1. Pending Admin Requests
-    const pending = users.filter((u) => u.adminRequest?.status === "pending" && u.role !== "owner" && u.role !== "admin");
+    const pending = users.filter(
+      (u) =>
+        u.adminRequest?.status === "pending" &&
+        u.role !== "owner" &&
+        u.role !== "admin",
+    );
     if (!pending.length) {
-      reqListContainer.innerHTML = '<p class="empty-state">No pending Admin requests at this time.</p>';
+      reqListContainer.innerHTML =
+        '<p class="empty-state">No pending Admin requests at this time.</p>';
     } else {
       reqListContainer.innerHTML = pending
         .map(
@@ -643,14 +654,14 @@ async function loadOwnerManagementData() {
             <button class="btn btn-ghost btn-xs" onclick="rejectAdminRequest('${u.id}', '${escapeHtml(u.username)}')">Decline</button>
           </div>
         </div>
-      `
+      `,
         )
         .join("");
     }
 
-    // 2. All Registered Users Table
     if (!users.length) {
-      usersTableBody.innerHTML = '<tr><td colspan="4" class="empty-state">No registered accounts found.</td></tr>';
+      usersTableBody.innerHTML =
+        '<tr><td colspan="4" class="empty-state">No registered accounts found.</td></tr>';
     } else {
       usersTableBody.innerHTML = users
         .map((u) => {
@@ -689,11 +700,11 @@ async function loadOwnerManagementData() {
         .join("");
     }
   } catch (err) {
-    if (reqListContainer) reqListContainer.innerHTML = `<p class="empty-state">Failed to load requests: ${escapeHtml(err.message)}</p>`;
+    if (reqListContainer)
+      reqListContainer.innerHTML = `<p class="empty-state">Failed to load requests: ${escapeHtml(err.message)}</p>`;
   }
 }
 
-// Window actions for Owner
 window.approveAdminRequest = async function (userId, username) {
   try {
     await api(`/api/admin/requests/${userId}/approve`, { method: "POST" });
@@ -735,13 +746,14 @@ window.changeUserRole = async function (userId, newRole, username) {
     });
     loadOwnerManagementData();
   } catch (err) {
-    showToast({ type: "error", title: "Role Update Failed", message: err.message });
+    showToast({
+      type: "error",
+      title: "Role Update Failed",
+      message: err.message,
+    });
   }
 };
 
-// ================================
-// PUBLIC INFO & CONTACT LINKS
-// ================================
 async function loadPublicInfo() {
   try {
     const info = await api("/api/public-info");
@@ -753,19 +765,22 @@ async function loadPublicInfo() {
 
     const ownerTgLink = info.telegramUrl || "#";
 
-    // Social Links
-    document.querySelectorAll("#link-tiktok, #link-tiktok-2").forEach((el) => (el.href = info.tiktokUrl || "#"));
-    document.querySelectorAll("#link-telegram, #link-telegram-2").forEach((el) => (el.href = info.telegramUrl || "#"));
+    document
+      .querySelectorAll("#link-tiktok, #link-tiktok-2")
+      .forEach((el) => (el.href = info.tiktokUrl || "#"));
+    document
+      .querySelectorAll("#link-telegram, #link-telegram-2")
+      .forEach((el) => (el.href = info.telegramUrl || "#"));
 
-    // Upgrade Purchase Links
-    document.querySelectorAll("#link-buy-wa, #home-link-wa").forEach((el) => (el.href = ownerWaLink));
-    document.querySelectorAll("#link-buy-tg").forEach((el) => (el.href = ownerTgLink));
+    document
+      .querySelectorAll("#link-buy-wa, #home-link-wa")
+      .forEach((el) => (el.href = ownerWaLink));
+    document
+      .querySelectorAll("#link-buy-tg")
+      .forEach((el) => (el.href = ownerTgLink));
   } catch {}
 }
 
-// ================================
-// BOT SETTINGS (OWNER ONLY)
-// ================================
 async function loadBotSettingsIntoForm() {
   try {
     const settings = await api("/api/bot-settings");
@@ -779,31 +794,36 @@ async function loadBotSettingsIntoForm() {
   } catch {}
 }
 
-document.getElementById("form-bot-settings").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const feedback = document.getElementById("bot-settings-feedback");
-  const fd = new FormData(e.target);
-  const payload = Object.fromEntries(fd.entries());
+document
+  .getElementById("form-bot-settings")
+  .addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const feedback = document.getElementById("bot-settings-feedback");
+    const fd = new FormData(e.target);
+    const payload = Object.fromEntries(fd.entries());
 
-  feedback.className = "feedback";
-  feedback.textContent = "Saving bot identity...";
+    feedback.className = "feedback";
+    feedback.textContent = "Saving bot identity...";
 
-  try {
-    await api("/api/bot-settings", { method: "POST", body: JSON.stringify(payload) });
-    feedback.className = "feedback success";
-    feedback.textContent = "Bot identity settings successfully saved.";
-    loadPublicInfo();
-    showToast({
-      type: "success",
-      title: "Bot Settings Saved",
-      message: "Bot profile configuration was updated.",
-    });
-  } catch (err) {
-    feedback.className = "feedback error";
-    feedback.textContent = err.message;
-    showToast({ type: "error", title: "Save Failed", message: err.message });
-  }
-});
+    try {
+      await api("/api/bot-settings", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+      feedback.className = "feedback success";
+      feedback.textContent = "Bot identity settings successfully saved.";
+      loadPublicInfo();
+      showToast({
+        type: "success",
+        title: "Bot Settings Saved",
+        message: "Bot profile configuration was updated.",
+      });
+    } catch (err) {
+      feedback.className = "feedback error";
+      feedback.textContent = err.message;
+      showToast({ type: "error", title: "Save Failed", message: err.message });
+    }
+  });
 
 // ================================
 // COMMAND CATALOG (MEMBER / ADMIN)
@@ -821,7 +841,10 @@ async function loadCommandList() {
       container.innerHTML = categories
         .map((cat) => {
           const chipItems = cat.items
-            .map((i) => `<span class="cmd-chip" title="${escapeHtml(i.desc)}">.${escapeHtml(i.cmd)}</span>`)
+            .map(
+              (i) =>
+                `<span class="cmd-chip" title="${escapeHtml(i.desc)}">.${escapeHtml(i.cmd)}</span>`,
+            )
             .join("");
 
           return `
@@ -845,7 +868,7 @@ async function loadCommandList() {
               (i) =>
                 `<span class="cmd-chip ${i.status === "key" ? "cmd-chip--locked" : ""}" title="${escapeHtml(i.desc)}">${
                   i.status === "key" ? "\u{26BF} " : ""
-                }.${escapeHtml(i.cmd)}</span>`
+                }.${escapeHtml(i.cmd)}</span>`,
             )
             .join("");
           return `<div class="cmd-category"><h4>${escapeHtml(cat.title)}</h4><div class="cmd-chips">${items}</div></div>`;
@@ -853,44 +876,47 @@ async function loadCommandList() {
         .join("");
     }
   } catch {
-    container.innerHTML = '<p class="empty-state">Failed to load command catalog.</p>';
+    container.innerHTML =
+      '<p class="empty-state">Failed to load command catalog.</p>';
   }
 }
 
 // ================================
 // BROADCAST TOOLS (ADMIN / OWNER)
 // ================================
-document.getElementById("btn-send-sticker").addEventListener("click", async () => {
-  const targetNumber = document.getElementById("sticker-target").value.trim();
-  const feedback = document.getElementById("sticker-feedback");
-  feedback.className = "feedback";
-  feedback.textContent = "";
+document
+  .getElementById("btn-send-sticker")
+  .addEventListener("click", async () => {
+    const targetNumber = document.getElementById("sticker-target").value.trim();
+    const feedback = document.getElementById("sticker-feedback");
+    feedback.className = "feedback";
+    feedback.textContent = "";
 
-  if (!targetNumber) {
-    feedback.className = "feedback error";
-    feedback.textContent = "Please enter a destination phone number.";
-    return;
-  }
+    if (!targetNumber) {
+      feedback.className = "feedback error";
+      feedback.textContent = "Please enter a destination phone number.";
+      return;
+    }
 
-  feedback.textContent = "Sending sticker pack...";
-  try {
-    const res = await api("/api/send/sticker", {
-      method: "POST",
-      body: JSON.stringify({ targetNumber }),
-    });
-    feedback.className = "feedback success";
-    feedback.textContent = `Successfully sent ${res.count} stickers.`;
-    showToast({
-      type: "success",
-      title: "Sticker Pack Sent",
-      message: `Successfully delivered ${res.count} stickers to ${targetNumber}.`,
-    });
-  } catch (err) {
-    feedback.className = "feedback error";
-    feedback.textContent = err.message;
-    showToast({ type: "error", title: "Send Failed", message: err.message });
-  }
-});
+    feedback.textContent = "Sending sticker pack...";
+    try {
+      const res = await api("/api/send/sticker", {
+        method: "POST",
+        body: JSON.stringify({ targetNumber }),
+      });
+      feedback.className = "feedback success";
+      feedback.textContent = `Successfully sent ${res.count} stickers.`;
+      showToast({
+        type: "success",
+        title: "Sticker Pack Sent",
+        message: `Successfully delivered ${res.count} stickers to ${targetNumber}.`,
+      });
+    } catch (err) {
+      feedback.className = "feedback error";
+      feedback.textContent = err.message;
+      showToast({ type: "error", title: "Send Failed", message: err.message });
+    }
+  });
 
 document.getElementById("btn-send-text").addEventListener("click", async () => {
   const targetNumber = document.getElementById("text-target").value.trim();
@@ -921,7 +947,11 @@ document.getElementById("btn-send-text").addEventListener("click", async () => {
   } catch (err) {
     feedback.className = "feedback error";
     feedback.textContent = err.message;
-    showToast({ type: "error", title: "Broadcast Failed", message: err.message });
+    showToast({
+      type: "error",
+      title: "Broadcast Failed",
+      message: err.message,
+    });
   }
 });
 
@@ -939,29 +969,34 @@ async function loadSettingsIntoForm() {
   } catch {}
 }
 
-document.getElementById("form-settings").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const feedback = document.getElementById("settings-feedback");
-  const fd = new FormData(e.target);
-  const payload = Object.fromEntries(fd.entries());
+document
+  .getElementById("form-settings")
+  .addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const feedback = document.getElementById("settings-feedback");
+    const fd = new FormData(e.target);
+    const payload = Object.fromEntries(fd.entries());
 
-  feedback.className = "feedback";
-  feedback.textContent = "Saving delay configuration...";
-  try {
-    await api("/api/settings", { method: "POST", body: JSON.stringify(payload) });
-    feedback.className = "feedback success";
-    feedback.textContent = "Configuration saved successfully.";
-    showToast({
-      type: "success",
-      title: "Configuration Saved",
-      message: "Watermark and delay settings have been applied.",
-    });
-  } catch (err) {
-    feedback.className = "feedback error";
-    feedback.textContent = err.message;
-    showToast({ type: "error", title: "Save Failed", message: err.message });
-  }
-});
+    feedback.className = "feedback";
+    feedback.textContent = "Saving delay configuration...";
+    try {
+      await api("/api/settings", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+      feedback.className = "feedback success";
+      feedback.textContent = "Configuration saved successfully.";
+      showToast({
+        type: "success",
+        title: "Configuration Saved",
+        message: "Watermark and delay settings have been applied.",
+      });
+    } catch (err) {
+      feedback.className = "feedback error";
+      feedback.textContent = err.message;
+      showToast({ type: "error", title: "Save Failed", message: err.message });
+    }
+  });
 
 // ================================
 // DEVICE PAIRING
@@ -989,60 +1024,63 @@ methodQrBtn.addEventListener("click", () => {
   hide(pairingMethodCode);
 });
 
-document.getElementById("btn-request-pairing").addEventListener("click", async () => {
-  const phoneNumber = document.getElementById("pairing-phone").value.trim();
-  const feedback = document.getElementById("pairing-feedback");
-  feedback.className = "feedback";
-  feedback.textContent = "";
+document
+  .getElementById("btn-request-pairing")
+  .addEventListener("click", async () => {
+    const phoneNumber = document.getElementById("pairing-phone").value.trim();
+    const feedback = document.getElementById("pairing-feedback");
+    feedback.className = "feedback";
+    feedback.textContent = "";
 
-  if (!phoneNumber) {
-    feedback.className = "feedback error";
-    feedback.textContent = "Please provide the bot WhatsApp phone number.";
-    showToast({
-      type: "warning",
-      title: "Phone Number Required",
-      message: "Enter the WhatsApp number including country code (e.g. 6281234567890).",
-    });
-    return;
-  }
+    if (!phoneNumber) {
+      feedback.className = "feedback error";
+      feedback.textContent = "Please provide the bot WhatsApp phone number.";
+      showToast({
+        type: "warning",
+        title: "Phone Number Required",
+        message:
+          "Enter the WhatsApp number including country code (e.g. 6281234567890).",
+      });
+      return;
+    }
 
-  requestNotificationPermission();
+    requestNotificationPermission();
 
-  feedback.textContent = "Requesting pairing code...";
-  try {
-    const res = await api("/api/pairing/request", {
-      method: "POST",
-      body: JSON.stringify({ phoneNumber }),
-    });
+    feedback.textContent = "Requesting pairing code...";
+    try {
+      const res = await api("/api/pairing/request", {
+        method: "POST",
+        body: JSON.stringify({ phoneNumber }),
+      });
 
-    document.getElementById("pairing-code").textContent = res.code;
-    hide(document.getElementById("pairing-idle"));
-    show(document.getElementById("pairing-code-wrap"));
+      document.getElementById("pairing-code").textContent = res.code;
+      hide(document.getElementById("pairing-idle"));
+      show(document.getElementById("pairing-code-wrap"));
 
-    feedback.className = "feedback success";
-    feedback.textContent = "Pairing code generated successfully!";
+      feedback.className = "feedback success";
+      feedback.textContent = "Pairing code generated successfully!";
 
-    showToast({
-      type: "info",
-      title: "Pairing Code Generated",
-      message: `Your code: ${res.code}. Enter this code in WhatsApp > Linked Devices.`,
-      duration: 12000,
-    });
+      showToast({
+        type: "info",
+        title: "Pairing Code Generated",
+        message: `Your code: ${res.code}. Enter this code in WhatsApp > Linked Devices.`,
+        duration: 12000,
+      });
 
-    sendDesktopNotification("WhatsApp Pairing Code", {
-      body: `Your code is ${res.code}. Enter this in WhatsApp on Linked Devices.`,
-      icon: "/assets/logo.png",
-    });
-  } catch (err) {
-    feedback.className = "feedback error";
-    feedback.textContent = err.message;
-    showToast({
-      type: "error",
-      title: "Pairing Request Failed",
-      message: err.message,
-    });
-  }
-});
+      sendDesktopNotification("WhatsApp Pairing Code", {
+        body: `Your code is ${res.code}. Enter this in WhatsApp on Linked Devices.`,
+        icon: "/assets/logo.png",
+      });
+    } catch (err) {
+      feedback.className = "feedback error";
+      feedback.textContent = err.message;
+      showToast({
+        type: "error",
+        title: "Pairing Request Failed",
+        message: err.message,
+      });
+    }
+  });
 
 function updateSenderEmptyState(status) {
   const emptyState = document.getElementById("sender-empty-state");
@@ -1077,16 +1115,29 @@ function openSenderSetupPanel() {
   fadeInEl(setupPanel);
 }
 
-document.getElementById("btn-add-first-sender").addEventListener("click", openSenderSetupPanel);
-document.getElementById("sender-fab").addEventListener("click", openSenderSetupPanel);
-document.getElementById("btn-pairing-back").addEventListener("click", () => goToPage("home"));
-document.getElementById("btn-pairing-refresh").addEventListener("click", async () => {
-  try {
-    const status = await api("/api/status");
-    applyStatus(status);
-    showToast({ type: "info", title: "Status Refreshed", message: "Updated connection state.", duration: 2000 });
-  } catch {}
-});
+document
+  .getElementById("btn-add-first-sender")
+  .addEventListener("click", openSenderSetupPanel);
+document
+  .getElementById("sender-fab")
+  .addEventListener("click", openSenderSetupPanel);
+document
+  .getElementById("btn-pairing-back")
+  .addEventListener("click", () => goToPage("home"));
+document
+  .getElementById("btn-pairing-refresh")
+  .addEventListener("click", async () => {
+    try {
+      const status = await api("/api/status");
+      applyStatus(status);
+      showToast({
+        type: "info",
+        title: "Status Refreshed",
+        message: "Updated connection state.",
+        duration: 2000,
+      });
+    } catch {}
+  });
 
 // ================================
 // AUDIO MANAGEMENT
@@ -1116,14 +1167,19 @@ function unlockAudioOnFirstInteraction() {
 }
 
 ["click", "touchstart", "keydown"].forEach((evt) => {
-  viewDashboard.addEventListener(evt, unlockAudioOnFirstInteraction, { once: true });
+  viewDashboard.addEventListener(evt, unlockAudioOnFirstInteraction, {
+    once: true,
+  });
 });
 
 // ================================
 // STATUS POLLING & LOGS
 // ================================
 function applyStatus(status) {
-  if (prevConnectionStatus !== null && prevConnectionStatus !== status.connectionStatus) {
+  if (
+    prevConnectionStatus !== null &&
+    prevConnectionStatus !== status.connectionStatus
+  ) {
     if (status.connectionStatus === "connected") {
       showToast({
         type: "success",
@@ -1135,7 +1191,10 @@ function applyStatus(status) {
         body: "Bot WhatsApp is online and ready.",
         icon: "/assets/logo.png",
       });
-    } else if (status.connectionStatus === "disconnected" && prevConnectionStatus === "connected") {
+    } else if (
+      status.connectionStatus === "disconnected" &&
+      prevConnectionStatus === "connected"
+    ) {
       showToast({
         type: "warning",
         title: "WhatsApp Disconnected",
@@ -1161,16 +1220,19 @@ function applyStatus(status) {
   statusText.textContent = labelMap[status.connectionStatus] || "Unknown";
 
   const homeStatus = document.getElementById("home-status-value");
-  if (homeStatus) homeStatus.textContent = labelMap[status.connectionStatus] || "-";
+  if (homeStatus)
+    homeStatus.textContent = labelMap[status.connectionStatus] || "-";
 
   const homeBotName = document.getElementById("home-botname-value");
   if (homeBotName) homeBotName.textContent = status.botName || "-";
 
   const homeBotVer = document.getElementById("home-botversion-value");
-  if (homeBotVer) homeBotVer.textContent = status.botVersion ? `v${status.botVersion}` : "-";
+  if (homeBotVer)
+    homeBotVer.textContent = status.botVersion ? `v${status.botVersion}` : "-";
 
   const brandVer = document.getElementById("brand-version");
-  if (brandVer) brandVer.textContent = status.botVersion ? `v${status.botVersion}` : "";
+  if (brandVer)
+    brandVer.textContent = status.botVersion ? `v${status.botVersion}` : "";
 
   renderLog(status.log || []);
 
@@ -1184,7 +1246,8 @@ function applyStatus(status) {
   const codeWrap = document.getElementById("pairing-code-wrap");
   const idleWrap = document.getElementById("pairing-idle");
   if (status.lastPairingCode && status.connectionStatus !== "connected") {
-    document.getElementById("pairing-code").textContent = status.lastPairingCode;
+    document.getElementById("pairing-code").textContent =
+      status.lastPairingCode;
     hide(idleWrap);
     show(codeWrap);
   } else if (status.connectionStatus === "connected") {
@@ -1203,7 +1266,9 @@ function applyStatus(status) {
     hide(qrImage);
     show(qrLoading);
     qrLoading.textContent =
-      status.connectionStatus === "connected" ? "Already connected." : "Waiting for QR code...";
+      status.connectionStatus === "connected"
+        ? "Already connected."
+        : "Waiting for QR code...";
   }
 
   updateSenderEmptyState(status);
@@ -1213,12 +1278,15 @@ function renderLog(log) {
   const container = document.getElementById("activity-log");
   if (!container) return;
   if (!log.length) {
-    container.innerHTML = '<p class="empty-state">No recent activity recorded.</p>';
+    container.innerHTML =
+      '<p class="empty-state">No recent activity recorded.</p>';
     return;
   }
   container.innerHTML = log
     .map((entry) => {
-      const time = new Date(entry.time).toLocaleTimeString("en-US", { hour12: false });
+      const time = new Date(entry.time).toLocaleTimeString("en-US", {
+        hour12: false,
+      });
       return `<div class="log-entry"><span>${escapeHtml(entry.text)}</span><span class="log-time">${time}</span></div>`;
     })
     .join("");
@@ -1246,7 +1314,9 @@ function stopStatusPolling() {
 // NAVIGATION & PAGE SWITCHING
 // ================================
 function goToPage(pageKey) {
-  navItems.forEach((b) => b.classList.toggle("active", b.dataset.page === pageKey));
+  navItems.forEach((b) =>
+    b.classList.toggle("active", b.dataset.page === pageKey),
+  );
   Object.entries(pages).forEach(([key, el]) => {
     if (el) el.style.display = key === pageKey ? "" : "none";
   });
@@ -1319,4 +1389,3 @@ btnLogout.addEventListener("click", async () => {
 // BOOTSTRAP
 // ================================
 init();
-

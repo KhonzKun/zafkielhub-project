@@ -15,10 +15,6 @@ const { Sticker, StickerTypes } = require("wa-sticker-formatter");
 const { attachCommandHandler } = require("./bot/handler");
 const botStore = require("./bot/store");
 const pkg = require("./package.json");
-
-// ================================
-// PENYIMPANAN DATA (file JSON lokal)
-// ================================
 const DATA_DIR = path.join(__dirname, "data");
 const USERS_FILE = path.join(DATA_DIR, "users.json");
 const SETTINGS_FILE = path.join(DATA_DIR, "settings.json");
@@ -83,7 +79,7 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function startBot() {
   const { state, saveCreds } = await useMultiFileAuthState(
-    path.join(__dirname, "auth")
+    path.join(__dirname, "auth"),
   );
   const { version } = await fetchLatestBaileysVersion();
 
@@ -126,7 +122,9 @@ async function startBot() {
       if (shouldReconnect) {
         startBot();
       } else {
-        logActivity("Logout. Hapus folder 'auth' kalau mau login ulang dari awal.");
+        logActivity(
+          "Logout. Hapus folder 'auth' kalau mau login ulang dari awal.",
+        );
       }
     }
   });
@@ -231,7 +229,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 * 7 }, // 7 days
-  })
+  }),
 );
 
 // Ensure avatars upload folder exists
@@ -246,14 +244,18 @@ function getCurrentUser(req) {
     user = data.users.find((u) => u.id === req.session.userId);
   }
   if (!user) {
-    user = data.users.find((u) => u.username.toLowerCase() === req.session.username.toLowerCase());
+    user = data.users.find(
+      (u) => u.username.toLowerCase() === req.session.username.toLowerCase(),
+    );
   }
   return user || null;
 }
 
 function saveUserRecord(updatedUser) {
   const data = getUsers();
-  const index = data.users.findIndex((u) => u.id === updatedUser.id || u.username === updatedUser.username);
+  const index = data.users.findIndex(
+    (u) => u.id === updatedUser.id || u.username === updatedUser.username,
+  );
   if (index !== -1) {
     data.users[index] = updatedUser;
   } else {
@@ -265,7 +267,9 @@ function saveUserRecord(updatedUser) {
 function requireAuth(req, res, next) {
   const user = getCurrentUser(req);
   if (!user) {
-    return res.status(401).json({ error: "Authentication required. Please log in." });
+    return res
+      .status(401)
+      .json({ error: "Authentication required. Please log in." });
   }
   req.user = user;
   next();
@@ -275,7 +279,9 @@ function requireAdmin(req, res, next) {
   requireAuth(req, res, () => {
     const role = req.user.role || "member";
     if (role !== "admin" && role !== "owner") {
-      return res.status(403).json({ error: "Access denied. Admin or Owner privileges required." });
+      return res
+        .status(403)
+        .json({ error: "Access denied. Admin or Owner privileges required." });
     }
     next();
   });
@@ -285,7 +291,9 @@ function requireOwner(req, res, next) {
   requireAuth(req, res, () => {
     const role = req.user.role || "member";
     if (role !== "owner") {
-      return res.status(403).json({ error: "Access denied. Only the Owner can perform this action." });
+      return res.status(403).json({
+        error: "Access denied. Only the Owner can perform this action.",
+      });
     }
     next();
   });
@@ -301,28 +309,39 @@ app.get("/api/auth/exists", (req, res) => {
 app.post("/api/auth/register", async (req, res) => {
   const { username, password } = req.body || {};
   if (!username || !password) {
-    return res.status(400).json({ error: "Username and password are required." });
+    return res
+      .status(400)
+      .json({ error: "Username and password are required." });
   }
   const cleanUsername = String(username).trim();
   if (cleanUsername.length < 3) {
-    return res.status(400).json({ error: "Username must be at least 3 characters." });
+    return res
+      .status(400)
+      .json({ error: "Username must be at least 3 characters." });
   }
   if (password.length < 6) {
-    return res.status(400).json({ error: "Password must be at least 6 characters." });
+    return res
+      .status(400)
+      .json({ error: "Password must be at least 6 characters." });
   }
 
   const data = getUsers();
   const exists = data.users.some(
-    (u) => u.username.toLowerCase() === cleanUsername.toLowerCase()
+    (u) => u.username.toLowerCase() === cleanUsername.toLowerCase(),
   );
   if (exists) {
-    return res.status(400).json({ error: "Username already taken. Please choose another." });
+    return res
+      .status(400)
+      .json({ error: "Username already taken. Please choose another." });
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
   const isFirstUser = data.users.length === 0;
   const role = isFirstUser ? "owner" : "member";
-  const id = "usr_" + Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
+  const id =
+    "usr_" +
+    Date.now().toString(36) +
+    Math.random().toString(36).substring(2, 6);
 
   const newUser = {
     id,
@@ -357,12 +376,14 @@ app.post("/api/auth/register", async (req, res) => {
 app.post("/api/auth/login", async (req, res) => {
   const { username, password } = req.body || {};
   if (!username || !password) {
-    return res.status(400).json({ error: "Username and password are required." });
+    return res
+      .status(400)
+      .json({ error: "Username and password are required." });
   }
 
   const data = getUsers();
   const user = data.users.find(
-    (u) => u.username.toLowerCase() === String(username).trim().toLowerCase()
+    (u) => u.username.toLowerCase() === String(username).trim().toLowerCase(),
   );
 
   if (!user) {
@@ -376,7 +397,10 @@ app.post("/api/auth/login", async (req, res) => {
 
   // Ensure ID and role exist
   if (!user.id) {
-    user.id = "usr_" + Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
+    user.id =
+      "usr_" +
+      Date.now().toString(36) +
+      Math.random().toString(36).substring(2, 6);
     writeJSON(USERS_FILE, data);
   }
 
@@ -402,10 +426,14 @@ app.post("/api/auth/logout", (req, res) => {
 app.post("/api/auth/change-password", requireAuth, async (req, res) => {
   const { currentPassword, newPassword } = req.body || {};
   if (!currentPassword || !newPassword) {
-    return res.status(400).json({ error: "Current and new passwords are required." });
+    return res
+      .status(400)
+      .json({ error: "Current and new passwords are required." });
   }
   if (newPassword.length < 6) {
-    return res.status(400).json({ error: "New password must be at least 6 characters." });
+    return res
+      .status(400)
+      .json({ error: "New password must be at least 6 characters." });
   }
 
   const match = await bcrypt.compare(currentPassword, req.user.passwordHash);
@@ -437,7 +465,9 @@ app.post("/api/profile/avatar", requireAuth, async (req, res) => {
   try {
     let finalUrl = avatarUrl || "";
     if (avatarData && avatarData.startsWith("data:image/")) {
-      const match = avatarData.match(/^data:image\/([a-zA-Z0-9]+);base64,(.+)$/);
+      const match = avatarData.match(
+        /^data:image\/([a-zA-Z0-9]+);base64,(.+)$/,
+      );
       if (match) {
         const ext = match[1] === "jpeg" ? "jpg" : match[1];
         const base64Data = match[2];
@@ -462,7 +492,9 @@ app.post("/api/profile/avatar", requireAuth, async (req, res) => {
 
 app.post("/api/role/request-admin", requireAuth, (req, res) => {
   if (req.user.role === "owner" || req.user.role === "admin") {
-    return res.status(400).json({ error: "You are already an Admin or Owner." });
+    return res
+      .status(400)
+      .json({ error: "You are already an Admin or Owner." });
   }
 
   req.user.adminRequest = {
@@ -471,8 +503,14 @@ app.post("/api/role/request-admin", requireAuth, (req, res) => {
   };
   saveUserRecord(req.user);
 
-  logActivity(`User @${req.user.username} submitted an Admin role request (pending Owner approval).`);
-  res.json({ ok: true, status: "pending", message: "Admin role request submitted to the Owner." });
+  logActivity(
+    `User @${req.user.username} submitted an Admin role request (pending Owner approval).`,
+  );
+  res.json({
+    ok: true,
+    status: "pending",
+    message: "Admin role request submitted to the Owner.",
+  });
 });
 
 // ---- OWNER ONLY: USER & REQUEST MANAGEMENT ----
@@ -498,7 +536,9 @@ app.post("/api/admin/users/:userId/role", requireOwner, (req, res) => {
   }
 
   const data = getUsers();
-  const target = data.users.find((u) => u.id === req.params.userId || u.username === req.params.userId);
+  const target = data.users.find(
+    (u) => u.id === req.params.userId || u.username === req.params.userId,
+  );
   if (!target) {
     return res.status(404).json({ error: "User not found." });
   }
@@ -506,12 +546,15 @@ app.post("/api/admin/users/:userId/role", requireOwner, (req, res) => {
   const oldRole = target.role;
   target.role = role;
   if (target.adminRequest && target.adminRequest.status === "pending") {
-    target.adminRequest.status = (role === "admin" || role === "owner") ? "approved" : "rejected";
+    target.adminRequest.status =
+      role === "admin" || role === "owner" ? "approved" : "rejected";
     target.adminRequest.reviewedAt = new Date().toISOString();
   }
 
   writeJSON(USERS_FILE, data);
-  logActivity(`Owner updated role for @${target.username}: ${oldRole} -> ${role}`);
+  logActivity(
+    `Owner updated role for @${target.username}: ${oldRole} -> ${role}`,
+  );
 
   res.json({
     ok: true,
@@ -525,7 +568,9 @@ app.post("/api/admin/users/:userId/role", requireOwner, (req, res) => {
 
 app.post("/api/admin/requests/:userId/approve", requireOwner, (req, res) => {
   const data = getUsers();
-  const target = data.users.find((u) => u.id === req.params.userId || u.username === req.params.userId);
+  const target = data.users.find(
+    (u) => u.id === req.params.userId || u.username === req.params.userId,
+  );
   if (!target) {
     return res.status(404).json({ error: "User not found." });
   }
@@ -538,13 +583,20 @@ app.post("/api/admin/requests/:userId/approve", requireOwner, (req, res) => {
   };
 
   writeJSON(USERS_FILE, data);
-  logActivity(`Owner approved Admin promotion for @${target.username} \u{2705}`);
-  res.json({ ok: true, message: `Approved Admin status for @${target.username}.` });
+  logActivity(
+    `Owner approved Admin promotion for @${target.username} \u{2705}`,
+  );
+  res.json({
+    ok: true,
+    message: `Approved Admin status for @${target.username}.`,
+  });
 });
 
 app.post("/api/admin/requests/:userId/reject", requireOwner, (req, res) => {
   const data = getUsers();
-  const target = data.users.find((u) => u.id === req.params.userId || u.username === req.params.userId);
+  const target = data.users.find(
+    (u) => u.id === req.params.userId || u.username === req.params.userId,
+  );
   if (!target) {
     return res.status(404).json({ error: "User not found." });
   }
@@ -557,7 +609,10 @@ app.post("/api/admin/requests/:userId/reject", requireOwner, (req, res) => {
 
   writeJSON(USERS_FILE, data);
   logActivity(`Owner rejected Admin request for @${target.username}.`);
-  res.json({ ok: true, message: `Rejected Admin request for @${target.username}.` });
+  res.json({
+    ok: true,
+    message: `Rejected Admin request for @${target.username}.`,
+  });
 });
 
 // ---- STATUS & LOG ----
@@ -644,7 +699,9 @@ app.post("/api/pairing/request", requireAuth, async (req, res) => {
     return res.status(400).json({ error: "Phone number is required." });
   }
   if (connectionStatus === "connected") {
-    return res.status(400).json({ error: "Bot is already connected. Pairing is not needed." });
+    return res
+      .status(400)
+      .json({ error: "Bot is already connected. Pairing is not needed." });
   }
 
   try {
@@ -683,7 +740,9 @@ app.post("/api/settings", requireAdmin, (req, res) => {
 app.post("/api/send/sticker", requireAdmin, async (req, res) => {
   const { targetNumber } = req.body || {};
   if (!targetNumber) {
-    return res.status(400).json({ error: "Destination phone number is required." });
+    return res
+      .status(400)
+      .json({ error: "Destination phone number is required." });
   }
   try {
     const count = await sendStickerPack(targetNumber);
@@ -696,7 +755,9 @@ app.post("/api/send/sticker", requireAdmin, async (req, res) => {
 app.post("/api/send/text", requireAdmin, async (req, res) => {
   const { targetNumber, count } = req.body || {};
   if (!targetNumber) {
-    return res.status(400).json({ error: "Destination phone number is required." });
+    return res
+      .status(400)
+      .json({ error: "Destination phone number is required." });
   }
   const parsedCount = Math.max(1, parseInt(count, 10) || 1);
   try {

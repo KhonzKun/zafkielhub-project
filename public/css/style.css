@@ -1,31 +1,19 @@
-/* ==========================================================================
-   ZAFKIELHUB - RESPONSIVE GLASS DARK UI SYSTEM
-   Optimized for Windows (Desktop / Laptop) & Android (Mobile Chrome)
-   ========================================================================== */
-
-/* --------------------------------------------------------------------------
-   1. DESIGN TOKENS & SYSTEM VARIABLES
-   -------------------------------------------------------------------------- */
 :root {
-  /* Color Palette - Deep Translucent Glass & Slate */
   --bg: #070308;
   --surface: rgba(18, 14, 24, 0.78);
   --surface-hover: rgba(28, 22, 38, 0.85);
   --surface-2: rgba(28, 20, 36, 0.72);
   --surface-3: rgba(42, 30, 54, 0.82);
 
-  /* Borders */
   --border: rgba(255, 255, 255, 0.1);
   --border-subtle: rgba(255, 255, 255, 0.05);
   --border-hover: rgba(244, 63, 94, 0.4);
   --border-focus: rgba(244, 63, 94, 0.6);
 
-  /* Typography */
   --text: #f8fafc;
   --text-muted: #cbd5e1;
   --text-dim: #94a3b8;
 
-  /* Brand Accents */
   --accent: #f43f5e;
   --accent-hover: #fb7185;
   --accent-active: #e11d48;
@@ -34,7 +22,6 @@
   --brand-gradient: linear-gradient(135deg, #f43f5e 0%, #a855f7 100%);
   --brand-gradient-hover: linear-gradient(135deg, #fb7185 0%, #c084fc 100%);
 
-  /* Status Colors */
   --success: #10b981;
   --success-bg: rgba(16, 185, 129, 0.16);
   --warning: #f59e0b;
@@ -42,30 +29,28 @@
   --danger: #ef4444;
   --danger-bg: rgba(239, 68, 68, 0.16);
 
-  /* Fonts */
-  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-sans:
+    "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, sans-serif;
   --font-mono: "JetBrains Mono", "IBM Plex Mono", Menlo, Consolas, monospace;
 
-  /* Geometry */
   --radius-xs: 6px;
   --radius-sm: 9px;
   --radius: 14px;
   --radius-lg: 18px;
   --radius-full: 9999px;
 
-  /* Shadows */
   --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.35);
   --shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 14px 40px rgba(0, 0, 0, 0.65);
 
-  /* Layout Containers */
   --container-max-width: 1040px;
 }
 
-/* --------------------------------------------------------------------------
-   2. GLOBAL RESETS & BASE
-   -------------------------------------------------------------------------- */
-*, *::before, *::after {
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -91,9 +76,7 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* --------------------------------------------------------------------------
-   3. BACKGROUND VIDEO & AMBIENT BACKDROP
-   -------------------------------------------------------------------------- */
+
 .bg-video {
   position: fixed;
   top: 0;
@@ -116,12 +99,15 @@ body {
   height: 100dvh;
   z-index: -1;
   background:
-    radial-gradient(120% 90% at 50% 0%, rgba(8, 4, 10, 0.45), rgba(8, 4, 10, 0.85) 65%),
+    radial-gradient(
+      120% 90% at 50% 0%,
+      rgba(8, 4, 10, 0.45),
+      rgba(8, 4, 10, 0.85) 65%
+    ),
     linear-gradient(180deg, rgba(8, 4, 10, 0.55) 0%, rgba(8, 4, 10, 0.92) 100%);
   pointer-events: none;
 }
 
-/* Glassmorphism Surface Defaults */
 .auth-card,
 .topbar,
 .card,
@@ -137,10 +123,13 @@ body {
   -webkit-backdrop-filter: blur(14px);
 }
 
-/* --------------------------------------------------------------------------
-   4. TYPOGRAPHY
-   -------------------------------------------------------------------------- */
-h1, h2, h3, h4, h5, h6 {
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-sans);
   font-weight: 700;
   color: var(--text);
@@ -172,9 +161,7 @@ a:hover {
   text-decoration: underline;
 }
 
-/* --------------------------------------------------------------------------
-   5. BUTTONS & CONTROLS
-   -------------------------------------------------------------------------- */
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -281,9 +268,7 @@ a:hover {
   color: var(--text);
 }
 
-/* --------------------------------------------------------------------------
-   6. FORMS & INPUTS
-   -------------------------------------------------------------------------- */
+
 .form-group {
   display: flex;
   flex-direction: column;
@@ -319,7 +304,9 @@ a:hover {
   transition: color 0.15s ease;
 }
 
-input, textarea, select {
+input,
+textarea,
+select {
   width: 100%;
   font-family: var(--font-sans);
   font-size: 0.92rem;
@@ -330,14 +317,19 @@ input, textarea, select {
   padding: 10px 14px;
   min-height: 42px;
   outline: none;
-  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .input-wrapper input {
   padding-left: 42px;
 }
 
-input:focus, textarea:focus, select:focus {
+input:focus,
+textarea:focus,
+select:focus {
   border-color: var(--accent);
   background: rgba(30, 24, 42, 0.9);
   box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.2);
@@ -347,7 +339,8 @@ input:focus, textarea:focus, select:focus {
   color: var(--accent);
 }
 
-input::placeholder, textarea::placeholder {
+input::placeholder,
+textarea::placeholder {
   color: var(--text-dim);
   font-size: 0.88rem;
 }
@@ -377,8 +370,12 @@ textarea {
   font-weight: 500;
 }
 
-.feedback.success { color: var(--success); }
-.feedback.error { color: var(--danger); }
+.feedback.success {
+  color: var(--success);
+}
+.feedback.error {
+  color: var(--danger);
+}
 
 .inline-form {
   display: flex;
@@ -386,9 +383,16 @@ textarea {
   align-items: center;
 }
 
-.inline-form input { flex: 1; min-width: 0; }
-.inline-form-3 input:first-child { flex: 2; }
-.inline-form-3 input:nth-child(2) { flex: 1; }
+.inline-form input {
+  flex: 1;
+  min-width: 0;
+}
+.inline-form-3 input:first-child {
+  flex: 2;
+}
+.inline-form-3 input:nth-child(2) {
+  flex: 1;
+}
 
 .settings-form {
   display: flex;
@@ -403,9 +407,7 @@ textarea {
   margin-top: 6px;
 }
 
-/* --------------------------------------------------------------------------
-   7. AUTH VIEW (LOGIN & REGISTER)
-   -------------------------------------------------------------------------- */
+
 .auth-view {
   min-height: 100vh;
   min-height: 100dvh;
@@ -494,7 +496,8 @@ textarea {
   letter-spacing: 0.05em;
 }
 
-.social-divider::before, .social-divider::after {
+.social-divider::before,
+.social-divider::after {
   content: "";
   flex: 1;
   height: 1px;
@@ -546,9 +549,7 @@ textarea {
   color: var(--accent);
 }
 
-/* --------------------------------------------------------------------------
-   8. DASHBOARD TOPBAR
-   -------------------------------------------------------------------------- */
+
 .topbar {
   position: sticky;
   top: 0;
@@ -605,7 +606,6 @@ textarea {
   gap: 10px;
 }
 
-/* Status Pill */
 .status-pill {
   display: inline-flex;
   align-items: center;
@@ -660,11 +660,17 @@ textarea {
 }
 
 @keyframes dot-pulse-glow {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.85); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.85);
+  }
 }
 
-/* Topbar Profile Button */
 .topbar-user-btn {
   display: flex;
   align-items: center;
@@ -748,7 +754,6 @@ textarea {
   border: 1px solid rgba(148, 163, 184, 0.3);
 }
 
-/* Role Badges */
 .role-badge {
   display: inline-flex;
   align-items: center;
@@ -762,21 +767,33 @@ textarea {
 }
 
 .role-badge-owner {
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.25), rgba(245, 158, 11, 0.25));
+  background: linear-gradient(
+    135deg,
+    rgba(239, 68, 68, 0.25),
+    rgba(245, 158, 11, 0.25)
+  );
   color: #fca5a5;
   border: 1px solid rgba(239, 68, 68, 0.5);
   box-shadow: 0 0 12px rgba(239, 68, 68, 0.2);
 }
 
 .role-badge-admin {
-  background: linear-gradient(135deg, rgba(168, 85, 247, 0.25), rgba(59, 130, 246, 0.25));
+  background: linear-gradient(
+    135deg,
+    rgba(168, 85, 247, 0.25),
+    rgba(59, 130, 246, 0.25)
+  );
   color: #d8b4fe;
   border: 1px solid rgba(168, 85, 247, 0.5);
   box-shadow: 0 0 12px rgba(168, 85, 247, 0.2);
 }
 
 .role-badge-premium {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(234, 179, 8, 0.25));
+  background: linear-gradient(
+    135deg,
+    rgba(245, 158, 11, 0.25),
+    rgba(234, 179, 8, 0.25)
+  );
   color: #fde047;
   border: 1px solid rgba(245, 158, 11, 0.5);
 }
@@ -787,9 +804,6 @@ textarea {
   border: 1px solid rgba(148, 163, 184, 0.25);
 }
 
-/* --------------------------------------------------------------------------
-   9. MAIN CONTENT & HERO BANNER
-   -------------------------------------------------------------------------- */
 .dashboard-content {
   max-width: var(--container-max-width);
   margin: 0 auto;
@@ -813,7 +827,6 @@ textarea {
   color: var(--text-muted);
 }
 
-/* HOME HERO BANNER */
 .hero-image-wrap {
   position: relative;
   width: 100%;
@@ -842,7 +855,6 @@ textarea {
   pointer-events: none;
 }
 
-/* MENU BOT HERO VIDEO */
 .hero-video-wrap {
   position: relative;
   width: 100%;
@@ -863,7 +875,6 @@ textarea {
   display: block;
 }
 
-/* Welcome Back Card */
 .welcome-card {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -973,8 +984,12 @@ textarea {
   color: var(--accent);
 }
 
-.welcome-stat-icon.stat-icon-bot svg { color: #38bdf8; }
-.welcome-stat-icon.stat-icon-version svg { color: #c084fc; }
+.welcome-stat-icon.stat-icon-bot svg {
+  color: #38bdf8;
+}
+.welcome-stat-icon.stat-icon-version svg {
+  color: #c084fc;
+}
 
 .welcome-stat-value {
   font-size: 0.92rem;
@@ -991,9 +1006,12 @@ textarea {
   color: var(--text-dim);
 }
 
-/* Upgrade Banners */
 .upgrade-banner-card {
-  background: linear-gradient(135deg, rgba(46, 20, 48, 0.75) 0%, rgba(20, 14, 32, 0.75) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(46, 20, 48, 0.75) 0%,
+    rgba(20, 14, 32, 0.75) 100%
+  );
   border: 1px solid rgba(244, 63, 94, 0.35);
   border-radius: var(--radius);
   padding: 22px;
@@ -1056,7 +1074,6 @@ textarea {
   line-height: 1.45;
 }
 
-/* Support Card */
 .support-card {
   margin-top: 24px;
   border: 1px solid var(--border);
@@ -1076,9 +1093,7 @@ textarea {
   line-height: 1.5;
 }
 
-/* --------------------------------------------------------------------------
-   10. CARDS & ACTION GRIDS
-   -------------------------------------------------------------------------- */
+
 .card {
   position: relative;
   border: 1px solid var(--border);
@@ -1159,7 +1174,6 @@ textarea {
   margin-bottom: 0;
 }
 
-/* Feature Locked Overlay */
 .feature-locked-overlay {
   position: absolute;
   inset: 0;
@@ -1198,7 +1212,6 @@ textarea {
   color: var(--text-dim);
 }
 
-/* Command Katalog */
 .command-list {
   display: flex;
   flex-direction: column;
@@ -1245,7 +1258,6 @@ textarea {
   border-style: dashed;
 }
 
-/* Category Card for Member View */
 .cmd-category-card {
   background: var(--surface-2);
   border: 1px solid var(--border);
@@ -1281,9 +1293,7 @@ textarea {
   margin-bottom: 12px;
 }
 
-/* --------------------------------------------------------------------------
-   11. OWNER USER MANAGEMENT PANEL
-   -------------------------------------------------------------------------- */
+
 .owner-panel-content {
   display: flex;
   flex-direction: column;
@@ -1407,9 +1417,7 @@ textarea {
   border-color: var(--accent);
 }
 
-/* --------------------------------------------------------------------------
-   12. PAIRING SENDER VIEW
-   -------------------------------------------------------------------------- */
+
 .sender-topbar {
   display: flex;
   align-items: center;
@@ -1760,9 +1768,7 @@ textarea {
   transform: scale(0.95);
 }
 
-/* --------------------------------------------------------------------------
-   13. ACTIVITY LOG (HISTORY PAGE)
-   -------------------------------------------------------------------------- */
+
 .log-list {
   display: flex;
   flex-direction: column;
@@ -1807,9 +1813,7 @@ textarea {
   border-radius: var(--radius);
 }
 
-/* --------------------------------------------------------------------------
-   14. USER PROFILE MODAL OVERLAY
-   -------------------------------------------------------------------------- */
+
 .profile-overlay {
   position: fixed;
   inset: 0;
@@ -1961,10 +1965,13 @@ textarea {
   color: var(--text-dim);
 }
 
-/* Upgrade CTA Card */
 .upgrade-cta-card {
   position: relative;
-  background: linear-gradient(135deg, rgba(38, 22, 54, 0.8) 0%, rgba(24, 18, 36, 0.8) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(38, 22, 54, 0.8) 0%,
+    rgba(24, 18, 36, 0.8) 100%
+  );
   border: 1px solid rgba(244, 63, 94, 0.3);
   border-radius: var(--radius);
   padding: 20px;
@@ -1978,7 +1985,11 @@ textarea {
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(244, 63, 94, 0.25) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(244, 63, 94, 0.25) 0%,
+    transparent 70%
+  );
   pointer-events: none;
 }
 
@@ -2023,9 +2034,7 @@ textarea {
   margin-top: 0;
 }
 
-/* --------------------------------------------------------------------------
-   15. INTRO / TRANSITION VIEW
-   -------------------------------------------------------------------------- */
+
 .intro-view {
   position: fixed;
   inset: 0;
@@ -2059,7 +2068,12 @@ textarea {
   align-items: center;
   justify-content: space-between;
   padding: max(20px, env(safe-area-inset-top)) 24px 20px;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.25) 60%, transparent 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.75) 0%,
+    rgba(0, 0, 0, 0.25) 60%,
+    transparent 100%
+  );
 }
 
 .intro-brand {
@@ -2158,9 +2172,7 @@ textarea {
   color: rgba(248, 250, 252, 0.7);
 }
 
-/* --------------------------------------------------------------------------
-   16. TOAST NOTIFICATIONS
-   -------------------------------------------------------------------------- */
+
 .toast-container {
   position: fixed;
   top: 20px;
@@ -2194,17 +2206,37 @@ textarea {
   animation: toast-out 0.25s ease forwards;
 }
 
-.toast-card.toast-success { border-color: rgba(16, 185, 129, 0.4); }
-.toast-card.toast-success .toast-icon { background: var(--success-bg); color: var(--success); }
+.toast-card.toast-success {
+  border-color: rgba(16, 185, 129, 0.4);
+}
+.toast-card.toast-success .toast-icon {
+  background: var(--success-bg);
+  color: var(--success);
+}
 
-.toast-card.toast-info { border-color: rgba(56, 189, 248, 0.4); }
-.toast-card.toast-info .toast-icon { background: rgba(56, 189, 248, 0.16); color: #38bdf8; }
+.toast-card.toast-info {
+  border-color: rgba(56, 189, 248, 0.4);
+}
+.toast-card.toast-info .toast-icon {
+  background: rgba(56, 189, 248, 0.16);
+  color: #38bdf8;
+}
 
-.toast-card.toast-warning { border-color: rgba(245, 158, 11, 0.4); }
-.toast-card.toast-warning .toast-icon { background: var(--warning-bg); color: var(--warning); }
+.toast-card.toast-warning {
+  border-color: rgba(245, 158, 11, 0.4);
+}
+.toast-card.toast-warning .toast-icon {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
 
-.toast-card.toast-error { border-color: rgba(239, 68, 68, 0.4); }
-.toast-card.toast-error .toast-icon { background: var(--danger-bg); color: var(--danger); }
+.toast-card.toast-error {
+  border-color: rgba(239, 68, 68, 0.4);
+}
+.toast-card.toast-error .toast-icon {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
 
 .toast-icon {
   width: 32px;
@@ -2261,18 +2293,28 @@ textarea {
 }
 
 @keyframes toast-in {
-  from { opacity: 0; transform: translateY(-12px) scale(0.96); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 @keyframes toast-out {
-  from { opacity: 1; transform: translateY(0) scale(1); }
-  to { opacity: 0; transform: translateY(-10px) scale(0.95); }
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
 }
 
-/* --------------------------------------------------------------------------
-   17. BOTTOM NAVIGATION BAR
-   -------------------------------------------------------------------------- */
+
 .bottom-nav {
   position: fixed;
   bottom: 0;
@@ -2333,9 +2375,6 @@ textarea {
   color: var(--accent);
 }
 
-/* --------------------------------------------------------------------------
-   18. ANIMATIONS & TRANSITIONS
-   -------------------------------------------------------------------------- */
 @keyframes zh-fade-in {
   from {
     opacity: 0;
@@ -2351,11 +2390,6 @@ textarea {
   animation: zh-fade-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* ==========================================================================
-   19. RESPONSIVE BREAKPOINTS (WINDOWS DESKTOP VS ANDROID MOBILE)
-   ========================================================================== */
-
-/* ---- DESKTOP / LAPTOP (WINDOWS & LARGE SCREENS >= 768px) ---- */
 @media (min-width: 768px) {
   .topbar-inner {
     padding: 14px 28px;
@@ -2365,7 +2399,6 @@ textarea {
     padding: 28px 28px 120px;
   }
 
-  /* Sleek floating dock navigation on desktop */
   .bottom-nav {
     bottom: 20px;
     left: 50%;
@@ -2407,7 +2440,6 @@ textarea {
   }
 }
 
-/* ---- TABLET & MOBILE (SCREENS <= 767px) ---- */
 @media (max-width: 767px) {
   .action-cards-grid {
     grid-template-columns: 1fr;
@@ -2487,14 +2519,15 @@ textarea {
   }
 }
 
-/* ---- MOBILE PHONES (ANDROID & NARROW SCREENS <= 480px) ---- */
 @media (max-width: 480px) {
   html {
     font-size: 14px;
   }
 
-  input, textarea, select {
-    font-size: 16px; /* Prevents auto-zoom on input focus in Android Chrome */
+  input,
+  textarea,
+  select {
+    font-size: 16px;
     min-height: 44px;
   }
 
@@ -2512,7 +2545,7 @@ textarea {
   }
 
   .topbar-username {
-    display: none; /* Hide username text so topbar never overflows on mobile */
+    display: none;
   }
 
   .topbar-user-btn {
@@ -2520,7 +2553,7 @@ textarea {
   }
 
   .btn-logout-text {
-    display: none; /* Icon-only logout on small screens */
+    display: none;
   }
 
   .btn-logout {
@@ -2537,7 +2570,6 @@ textarea {
     display: none;
   }
 
-  /* Profile bottom sheet modal on mobile */
   .profile-overlay {
     padding: 0;
     align-items: flex-end;
@@ -2602,9 +2634,10 @@ textarea {
   }
 }
 
-/* ---- ACCESSIBILITY: REDUCED MOTION ---- */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
